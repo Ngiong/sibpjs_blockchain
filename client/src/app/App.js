@@ -1,5 +1,9 @@
 import React from 'react'
 import ReadString from '../containers/ReadString'
+
+import { BrowserRouter as Router } from 'react-router-dom'
+import { routes, Menu } from './routes'
+
 import './App.css'
 
 class App extends React.Component {
@@ -29,12 +33,16 @@ class App extends React.Component {
   render() {
     if (this.state.loading) return "Loading Drizzle..."
     return (
-      <div className="App">
-        <ReadString
-          drizzle={this.props.drizzle}
-          drizzleState={this.state.drizzleState}
-        />
-      </div>
+      <Router>
+        <Menu />
+        {routes}
+        <div className="App">
+          <ReadString
+            drizzle={this.props.drizzle}
+            drizzleState={this.state.drizzleState}
+          />
+        </div>
+      </Router>
     )
   }
 }
