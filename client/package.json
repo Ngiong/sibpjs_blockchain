@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "drizzle": "^1.4.0",
+    "node-rsa": "^1.0.6",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-router-dom": "^5.1.2",

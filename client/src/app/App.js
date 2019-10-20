@@ -1,5 +1,6 @@
 import React from 'react'
 import ReadString from '../containers/ReadString'
+import LoginInfoBar from '../containers/LoginInfoBar'
 
 import { BrowserRouter as Router } from 'react-router-dom'
 import { routes, Menu } from './routes'
@@ -7,12 +8,9 @@ import { routes, Menu } from './routes'
 import './App.css'
 
 class App extends React.Component {
-  constructor() {
-    super()
-    this.state = { loading: true, drizzleState: null } 
-  }
+  state = { drizzleLoading: true, drizzleState: null }
 
-  componentDidMount() {
+  componentDidMount = () => {
     const { drizzle } = this.props
   
     // subscribe to changes in the store
@@ -23,24 +21,27 @@ class App extends React.Component {
   
       // check to see if it's ready, if so, update local component state
       if (drizzleState.drizzleStatus.initialized) {
-        this.setState({ loading: false, drizzleState })
+        this.setState({ drizzleLoading: false, drizzleState })
       }
     })
   }
 
-  componentWillUnmount() { this.unsubscribe() }
+  componentWillUnmount = () => this.unsubscribe()
 
-  render() {
-    if (this.state.loading) return "Loading Drizzle..."
+  render = () => {
+    let { drizzle } = this.props
+    let { drizzleLoading, drizzleState } = this.state
+
+    if (drizzleLoading) return "Loading Drizzle..."
+    const drizzleProps = { drizzle, drizzleState }
+
     return (
       <Router>
         <Menu />
         {routes}
         <div className="App">
-          <ReadString
-            drizzle={this.props.drizzle}
-            drizzleState={this.state.drizzleState}
-          />
+          <LoginInfoBar {...drizzleProps} />
+          {/* <ReadString {...drizzleProps} /> */}
         </div>
       </Router>
     )
