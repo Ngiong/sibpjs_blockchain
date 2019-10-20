@@ -3,29 +3,38 @@ pragma experimental ABIEncoderV2;
 
 contract Document {
   uint256 public totalDocument = 0;
-  mapping (uint256 => DocumentData) public documents;
-  mapping (address => DocumentData[]) public documentList;
+  uint256 public totalAuthorizedDocument = 0;
+  mapping (address => OwnedDocumentData[]) public ownedDocumentList;
+  mapping (address => AuthorizedDocumentData[]) public authorizedDocumentList;
 
-  struct DocumentData {
+  struct OwnedDocumentData {
     uint256 id;
     string data;
   }
 
-  function createDocument(string memory _data,
-    address _owner1, address _owner2) public {
-    
+  struct AuthorizedDocumentData {
+    uint256 id;
+    address owner;
+    string data;
+  }
+
+  function createDocument(address _owner, string memory _data) public {
     totalDocument++;
-    documents[totalDocument] = DocumentData(totalDocument, _data);
-
-    documentList[_owner1].push(documents[totalDocument]);
-    documentList[_owner2].push(documents[totalDocument]);
+    OwnedDocumentData memory _tmp = OwnedDocumentData(totalDocument, _data);
+    ownedDocumentList[_owner].push(_tmp);
   }
 
-  function retrieveDocumentList(address _address) public returns (DocumentData[] memory) {
-    return documentList[_address];
+  function authorizeDocument(address _recipient, address _granter, string memory _data) public {
+    totalAuthorizedDocument++;
+    AuthorizedDocumentData memory _tmp = AuthorizedDocumentData(totalAuthorizedDocument, _granter, _data);
+    authorizedDocumentList[_recipient].push(_tmp);
   }
 
-  constructor() public {
-    createDocument('myFirstDocument', 0x1898C85C2Ad7F3Ba1073a6Ca5a3323Ea6cDEFFf6, 0x9f448C0d30089C7a87D55e0A10BFFbD1B4deF927);
+  function getOwnedDocumentList(address _account) public view returns (OwnedDocumentData[] memory) {
+    return ownedDocumentList[_account];
+  }
+
+  function getAuthorizedDocumentList(address _account) public view returns (AuthorizedDocumentData[] memory) {
+    return authorizedDocumentList[_account];
   }
 }
