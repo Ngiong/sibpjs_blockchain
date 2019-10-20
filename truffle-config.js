@@ -1,3 +1,5 @@
+const path = require("path")
+
 module.exports = {
   networks: {
     development: {
@@ -11,5 +13,6 @@ module.exports = {
       enabled: true,
       runs: 200
     }
-  }
+  },
+  contracts_build_directory: path.join(__dirname, "client/src/contracts")
 }
