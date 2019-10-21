@@ -3,7 +3,7 @@ import ReadString from '../containers/ReadString'
 import LoginInfoBar from '../containers/LoginInfoBar'
 
 import { BrowserRouter as Router } from 'react-router-dom'
-import { routes, Menu } from './routes'
+import { getRoutes, Menu } from './routes'
 
 import './App.css'
 
@@ -34,6 +34,8 @@ class App extends React.Component {
 
     if (drizzleLoading) return "Loading Drizzle..."
     const drizzleProps = { drizzle, drizzleState }
+
+    const routes = getRoutes(drizzleProps)
 
     return (
       <Router>
