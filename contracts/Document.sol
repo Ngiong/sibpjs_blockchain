@@ -9,7 +9,7 @@ contract Document {
 
   struct OwnedDocumentData {
     uint256 id;
-    string data;
+    string data; // TODO: nambah digital signature
   }
 
   struct AuthorizedDocumentData {

@@ -32,15 +32,17 @@ class AccountPage extends React.Component {
     this.setState({ _getAccountDataKey })
   }
 
-  componentDidUpdate = prevProps => {
-    if (this.props.drizzleState !== prevProps.drizzleState) {
-      this.retrieveStoredContract()
-    }
-  }
+  // componentDidUpdate = prevProps => {
+  //   if (this.props.drizzleState !== prevProps.drizzleState) {
+  //     this.retrieveStoredContract()
+  //   }
+  // }
 
   render = () => {
     let { input } = this.state
     let { accountProperties } = input
+
+    this.retrieveStoredContract()
 
     const textStyle = { width: '100%' }
 
@@ -66,10 +68,10 @@ class AccountPage extends React.Component {
         <hr />
 
         <div>Public Key: </div>
-        <div><input type='text' value={input.publicKey} disabled style={textStyle} /></div>
+        <div><pre>{input.publicKey}</pre></div>
 
         <div>Public Key: </div>
-        <div><input type='text' value={input.privateKey} disabled style={textStyle} /></div>
+        <div><pre>{input.privateKey}</pre></div>
         
         <div onClick={this.handleGenerateButtonClick}>Generate</div>
 
@@ -90,9 +92,7 @@ class AccountPage extends React.Component {
     const accountData = Account.accounts[this.state._getAccountDataKey]
     const value = accountData && accountData.value
 
-    console.log('VALUE', value, this.state._getAccountDataKey)
-
-    if (value && value.publicKey) {
+    if (value && value.publicKey && !this.state.input.publicKey) {
       const accountProperties = JSON.parse(value.data)
       const input = {
         accountType: value.accountType,

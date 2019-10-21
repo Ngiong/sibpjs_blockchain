@@ -1,5 +1,4 @@
 import React from 'react'
-import ReadString from '../containers/ReadString'
 import LoginInfoBar from '../containers/LoginInfoBar'
 
 import { BrowserRouter as Router } from 'react-router-dom'
@@ -39,12 +38,9 @@ class App extends React.Component {
 
     return (
       <Router>
+        <LoginInfoBar {...drizzleProps} />
         <Menu />
         {routes}
-        <div className="App">
-          <LoginInfoBar {...drizzleProps} />
-          {/* <ReadString {...drizzleProps} /> */}
-        </div>
       </Router>
     )
   }
