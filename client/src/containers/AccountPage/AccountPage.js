@@ -21,7 +21,21 @@ class AccountPage extends React.Component {
       privateKey: '',
       accountProperties: {},
     },
-    stackId: null
+    _getAccountDataKey: null,
+    _transactionStackId: null,
+  }
+
+  componentDidMount = () => {
+    const contract = this.props.drizzle.contracts.Account
+    const accountAddress = this.props.drizzleState.accounts[0]
+    const _getAccountDataKey = contract.methods['accounts'].cacheCall(accountAddress)
+    this.setState({ _getAccountDataKey })
+  }
+
+  componentDidUpdate = prevProps => {
+    if (this.props.drizzleState !== prevProps.drizzleState) {
+      this.retrieveStoredContract()
+    }
   }
 
   render = () => {
@@ -71,6 +85,26 @@ class AccountPage extends React.Component {
     </div>
   }
 
+  retrieveStoredContract = () => {
+    const { Account } = this.props.drizzleState.contracts
+    const accountData = Account.accounts[this.state._getAccountDataKey]
+    const value = accountData && accountData.value
+
+    console.log('VALUE', value, this.state._getAccountDataKey)
+
+    if (value && value.publicKey) {
+      const accountProperties = JSON.parse(value.data)
+      const input = {
+        accountType: value.accountType,
+        accountName: accountProperties.accountName,
+        publicKey: value.publicKey,
+        privateKey: 'Hanya Anda yang menyimpan private key',
+        accountProperties: accountProperties,
+      }
+      this.setState({ input })
+    }
+  }
+
   handleInputChange = (field, event) => {
     let newInput = { ...this.state.input }
     newInput[field] = event.target.value
@@ -94,15 +128,15 @@ class AccountPage extends React.Component {
   handleSubmitButtonClick = () => {
     const { drizzle, drizzleState } = this.props
     const ledger = new AccountLedger(drizzle, drizzleState)
-    const stackId = ledger.createAccount(this.state.input)
-    this.setState({ stackId })
+    const _transactionStackId = ledger.createAccount(this.state.input)
+    this.setState({ _transactionStackId })
   }
 
   getTransactionStatus = () => {
-    if (this.state.stackId === null) return 'Not connected.'
+    if (this.state._transactionStackId === null) return 'Not connected.'
     const { drizzle, drizzleState } = this.props
     const ledger = new AccountLedger(drizzle, drizzleState)
-    ledger.getTransactionStatus(this.state.stackId)
+    ledger.getTransactionStatus(this.state._transactionStackId)
   }
 }
 

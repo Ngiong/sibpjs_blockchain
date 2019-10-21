@@ -13,9 +13,12 @@ class AccountLedger {
 
     const publicKey = input.publicKey
     const accountType = input.accountType
-    const data = JSON.stringify(input.accountProperties)
+    const data = {
+      ...input.accountProperties,
+      accountName: input.accountName,
+    }
 
-    const transactionStackId = contract.methods['createAccount'].cacheSend(accountAddress, publicKey, accountType, data)
+    const transactionStackId = contract.methods['createAccount'].cacheSend(accountAddress, publicKey, accountType, JSON.stringify(data))
     return transactionStackId
   }
 
