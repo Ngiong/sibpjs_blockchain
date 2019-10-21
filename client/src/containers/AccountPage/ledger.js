@@ -3,8 +3,8 @@ let drizzleState = null
 
 class AccountLedger {
   constructor (_drizzle, _drizzleState) {
-    drizzle = _drizzle
-    drizzleState = _drizzleState
+    if (drizzle === null) drizzle = _drizzle
+    if (drizzleState === null) drizzleState = _drizzleState
   }
 
   createAccount = input => {

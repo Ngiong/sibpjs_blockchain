@@ -3,19 +3,10 @@ import { encryptRSA, decryptRSA } from './rsa'
 let drizzle = null
 let drizzleState = null
 
-const getAccountInfo = address => {
-  const contract = drizzle.contracts.Account
-  const _getAccountDataKey = contract.methods['accounts'].cacheCall(address)
-
-  const accountData = drizzleState.contracts.Account.accounts[_getAccountDataKey]
-  const value = accountData && accountData.value
-  return value
-}
-
 class DocumentLedger {
   constructor (_drizzle, _drizzleState) {
-    drizzle = _drizzle
-    drizzleState = _drizzleState
+    if (drizzle === null) drizzle = _drizzle
+    if (drizzleState === null) drizzleState = _drizzleState
   }
 
   // function createDocument(address _owner, string memory _data) public {
@@ -24,9 +15,14 @@ class DocumentLedger {
   //   ownedDocumentList[_owner].push(_tmp);
   // }
 
-  createDocument = input => {
+  getDocumentRecipientAccountInfo = address => {
+    const contract = drizzle.contracts.Account
+    const _getAccountDataKey = contract.methods['accounts'].cacheCall(address)
+    return _getAccountDataKey
+  }
+
+  createDocument = (recipient, input) => {
     const recipientAddress = input.documentRecipient
-    const recipient = getAccountInfo(recipientAddress)
     const cipher = encryptRSA(recipient.publicKey, JSON.stringify(input))
     this.submitDocumentContract(recipientAddress, cipher)
   }

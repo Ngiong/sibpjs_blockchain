@@ -19,7 +19,19 @@ class DocumentPage extends React.Component {
       documentRecipient: '',
       documentDescription: '',
     },
+    _getDocumentRecipientDataKey: null,
     _transactionStackId: null,
+  }
+
+  componentDidUpdate = prevProps => {
+    const dataKey = this.state._getDocumentRecipientDataKey
+    if (dataKey) {
+      if (this.props.drizzleState.contracts.Account.accounts[dataKey] && !prevProps.drizzleState.contracts.Account.accounts[dataKey]) {
+        const result = this.props.drizzleState.contracts.Account.accounts[dataKey]
+        const accountData = result && result.value
+        this.proceedCreateDocument(accountData)
+      }
+    }
   }
 
   render = () => {
@@ -66,7 +78,20 @@ class DocumentPage extends React.Component {
   handleSubmitButtonClick = () => {
     const { drizzle, drizzleState } = this.props
     const ledger = new DocumentLedger(drizzle, drizzleState)
-    const _transactionStackId = ledger.createDocument(this.state.input)
+    const _getDocumentRecipientDataKey = ledger.getDocumentRecipientAccountInfo(this.state.input.documentRecipient)
+    this.setState({ _getDocumentRecipientDataKey })
+
+    if (_getDocumentRecipientDataKey in this.props.drizzleState.contracts.Account.accounts) {
+      const result = this.props.drizzleState.contracts.Account.accounts[_getDocumentRecipientDataKey]
+      const accountData = result && result.value
+      this.proceedCreateDocument(accountData)
+    }
+  }
+
+  proceedCreateDocument = recipientAccountData => {
+    const { drizzle, drizzleState } = this.props
+    const ledger = new DocumentLedger(drizzle, drizzleState)
+    const _transactionStackId = ledger.createDocument(recipientAccountData, this.state.input)
     this.setState({ _transactionStackId })
   }
 }
