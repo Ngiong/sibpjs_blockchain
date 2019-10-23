@@ -22,15 +22,13 @@ class LoginInfoBar extends React.Component {
   retrieveAccountData = () => {
     const { drizzle, drizzleState } = this.props
     const accountAddress = drizzleState.accounts[0]
-    const _getAccountDataKey = drizzle.contracts.Account.methods['account'].cacheCall(accountAddress)
-    return _getAccountDataKey
+    return drizzle.contracts.Account.methods['account'].cacheCall(accountAddress)
   }
 
   readAccountData = () => {
     let { _getAccountDataKey } = this.state
     const accountData = this.props.drizzleState.contracts.Account.account[_getAccountDataKey]
-    const value = accountData && accountData.value
-    return value
+    return accountData && accountData.value
   }
 }
 

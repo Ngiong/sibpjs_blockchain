@@ -1,4 +1,4 @@
-import { encryptRSA, decryptRSA } from './rsa'
+import { encryptRSA } from './rsa'
 
 let drizzle = null
 let drizzleState = null
@@ -31,6 +31,12 @@ class DocumentLedger {
     const contract = drizzle.contracts.Document
     const _getOwnedDocumentListDataKey = contract.methods['getOwnedDocumentList'].cacheCall(address)
     return _getOwnedDocumentListDataKey
+  }
+
+  getDocumentById = documentId => {
+    const contract = drizzle.contracts.Document
+    const _getDocumentByIdDataKey = contract.methods['document'].cacheCall(documentId)
+    return _getDocumentByIdDataKey
   }
 }
 

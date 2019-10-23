@@ -6,8 +6,12 @@ const encryptRSA = (publicKey, text) => {
 }
 
 const decryptRSA = (privateKey, cipher) => {
-  const _privateKey = new NodeRSA(privateKey, 'private')
-  return _privateKey.decrypt(cipher, 'utf8')
+  try {
+    const _privateKey = new NodeRSA(privateKey, 'private')
+    return _privateKey.decrypt(cipher, 'utf8')
+  } catch (err) {
+    return 'Invalid key.'
+  }
 }
 
 export { encryptRSA, decryptRSA }

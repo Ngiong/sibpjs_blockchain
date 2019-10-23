@@ -1,5 +1,7 @@
 import React from 'react'
+import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import DocumentLedger from './ledger'
+import { decryptRSA } from './rsa'
 
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
@@ -7,9 +9,10 @@ const FIELD = {
   DOCUMENT_ISSUER: 'documentIssuer',
   DOCUMENT_RECIPIENT: 'documentRecipient',
   DOCUMENT_DESCRIPTION: 'documentDescription',
+  ACCOUNT_PRIVATE_KEY: 'accountPrivateKey',
 }
 
-class DocumentPage extends React.Component {
+class DocumentPage extends ReactDrizzleComponent {
   state = {
     mode: 'CREATE', // 'LIST', 'VIEW'
     input: {
@@ -18,25 +21,22 @@ class DocumentPage extends React.Component {
       documentIssuer: '',
       documentRecipient: '',
       documentDescription: '',
+      accountPrivateKey: '',
     },
     _getDocumentRecipientDataKey: null,
     _getOwnedDocumentListDataKey: null,
+    _getDocumentDataKey: {},
     _transactionStackId: null,
   }
 
   componentDidUpdate = prevProps => {
-    const dataKey1 = this.state._getDocumentRecipientDataKey
-    if (dataKey1) {
-      if (this.props.drizzleState.contracts.Account.account[dataKey1] && !prevProps.drizzleState.contracts.Account.account[dataKey1]) {
-        const result = this.props.drizzleState.contracts.Account.account[dataKey1]
-        const accountData = result && result.value
-        this.proceedCreateDocument(accountData)
-      }
-    }
+    this._drizzleStateDidUpdate(prevProps, '_getDocumentRecipientDataKey', 'Account', 'account', this.proceedCreateDocument)
+    this._drizzleStateDidUpdate(prevProps, '_getOwnedDocumentListDataKey', 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
   }
 
   componentDidMount = () => {
     const _getOwnedDocumentListDataKey = this.retrieveOwnedDocumentList()
+    this._drizzleStateIfExist(_getOwnedDocumentListDataKey, 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
     this.setState({ _getOwnedDocumentListDataKey })
   }
 
@@ -61,10 +61,13 @@ class DocumentPage extends React.Component {
     </div>
 
     const ownedDocumentList = this.readOwnedDocumentList()
-    const rOwnedDocumentList = this.renderOwnedDocumentList(ownedDocumentList)
+    const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
+    const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
     const listSection = <div>
       <h1>Your Document List</h1>
+      <div>Your Private Key: </div>
+      <div><textarea value={input.accountPrivateKey} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_PRIVATE_KEY)} /></div>
       {rOwnedDocumentList}
     </div>
 
@@ -87,20 +90,14 @@ class DocumentPage extends React.Component {
 
   handleSubmitButtonClick = () => {
     const _getDocumentRecipientDataKey = this.retrieveDocumentRecipient(this.state.input.documentRecipient)
+    this._drizzleStateIfExist(_getDocumentRecipientDataKey, 'Account', 'account', this.proceedCreateDocument)
     this.setState({ _getDocumentRecipientDataKey })
-
-    if (_getDocumentRecipientDataKey in this.props.drizzleState.contracts.Account.account) {
-      const result = this.props.drizzleState.contracts.Account.account[_getDocumentRecipientDataKey]
-      const accountData = result && result.value
-      this.proceedCreateDocument(accountData)
-    }
   }
 
   retrieveDocumentRecipient = address => {
     const { drizzle, drizzleState } = this.props
     const ledger = new DocumentLedger(drizzle, drizzleState)
-    const _getDocumentRecipientDataKey = ledger.getDocumentRecipientAccountInfo(address)
-    return _getDocumentRecipientDataKey
+    return ledger.getDocumentRecipientAccountInfo(address)
   }
 
   proceedCreateDocument = recipientAccountData => {
@@ -114,8 +111,7 @@ class DocumentPage extends React.Component {
     const { drizzle, drizzleState } = this.props
     const accountAddress = drizzleState.accounts[0]
     const ledger = new DocumentLedger(drizzle, drizzleState)
-    const _getOwnedDocumentListDataKey = ledger.getOwnedDocumentList(accountAddress)
-    return _getOwnedDocumentListDataKey
+    return ledger.getOwnedDocumentList(accountAddress)
   }
 
   readOwnedDocumentList = () => {
@@ -126,8 +122,32 @@ class DocumentPage extends React.Component {
   }
 
   renderOwnedDocumentList = documentList => {
-    console.log('DocumentList', documentList)
     return <div>{JSON.stringify(documentList)}</div>
+  }
+
+  retrieveDocuments = documentIds => {
+    const { drizzle, drizzleState } = this.props
+    const ledger = new DocumentLedger(drizzle, drizzleState)
+
+    let _getDocumentDataKey = {}
+    documentIds.forEach(documentId => {
+      const _dataKey = ledger.getDocumentById(documentId)
+      _getDocumentDataKey[documentId] = _dataKey
+    })
+    this.setState({ _getDocumentDataKey })
+  }
+
+  readDocument = privateKey => {
+    const { _getDocumentDataKey } = this.state
+
+    let decryptionResult = {}
+    Object.keys(_getDocumentDataKey).forEach(documentId => {
+      const result = this.props.drizzleState.contracts.Document.document[_getDocumentDataKey[documentId]]
+      const cipher = result && result.value
+      const data = decryptRSA(privateKey, cipher)
+      decryptionResult[documentId] = data
+    })
+    return decryptionResult
   }
 }
 

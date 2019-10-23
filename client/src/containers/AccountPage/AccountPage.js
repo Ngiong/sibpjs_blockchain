@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import { generateRSAKeyPair } from './rsa'
 import AccountLedger from './ledger'
 
@@ -12,39 +13,31 @@ const FIELD = {
   ADDRESS: 'address',
 }
 
-class AccountPage extends React.Component {
+class AccountPage extends ReactDrizzleComponent {
   state = {
     input: {
       accountType: 'REGULAR',
       accountName: '',
       publicKey: '',
       privateKey: '',
-      accountProperties: {},
+      accountProperties: {
+        bpjsIdentityNumber: '',
+        address: '',
+      },
     },
     _getAccountDataKey: null,
     _transactionStackId: null,
   }
 
-  componentDidMount = () => {
-    const contract = this.props.drizzle.contracts.Account
-    const accountAddress = this.props.drizzleState.accounts[0]
-    const _getAccountDataKey = contract.methods['account'].cacheCall(accountAddress)
-    this.setState({ _getAccountDataKey })
-  }
+  componentDidMount = () => { this.retrieveAccountData() }
 
-  // componentDidUpdate = prevProps => {
-  //   if (this.props.drizzleState !== prevProps.drizzleState) {
-  //     this.retrieveStoredContract()
-  //   }
-  // }
+  componentDidUpdate = prevProps => {
+    this._drizzleStateDidUpdate(prevProps, '_getAccountDataKey', 'Account', 'account', this.restoreAccountData)
+  }
 
   render = () => {
     let { input } = this.state
     let { accountProperties } = input
-
-    this.retrieveStoredContract()
-
-    const textStyle = { width: '100%' }
 
     const regularSection = <div>
       <div>Nomor BPJS: </div>
@@ -87,24 +80,6 @@ class AccountPage extends React.Component {
     </div>
   }
 
-  retrieveStoredContract = () => {
-    const { Account } = this.props.drizzleState.contracts
-    const accountData = Account.account[this.state._getAccountDataKey]
-    const value = accountData && accountData.value
-
-    if (value && value.publicKey && !this.state.input.publicKey) {
-      const accountProperties = JSON.parse(value.data)
-      const input = {
-        accountType: value.accountType,
-        accountName: accountProperties.accountName,
-        publicKey: value.publicKey,
-        privateKey: 'Hanya Anda yang menyimpan private key',
-        accountProperties: accountProperties,
-      }
-      this.setState({ input })
-    }
-  }
-
   handleInputChange = (field, event) => {
     let newInput = { ...this.state.input }
     newInput[field] = event.target.value
@@ -137,6 +112,34 @@ class AccountPage extends React.Component {
     const { drizzle, drizzleState } = this.props
     const ledger = new AccountLedger(drizzle, drizzleState)
     ledger.getTransactionStatus(this.state._transactionStackId)
+  }
+
+  retrieveAccountData = () => {
+    const contract = this.props.drizzle.contracts.Account
+    const accountAddress = this.props.drizzleState.accounts[0]
+    const _getAccountDataKey = contract.methods['account'].cacheCall(accountAddress)
+    this._drizzleStateIfExist(_getAccountDataKey, 'Account', 'account', this.restoreAccountData)
+    this.setState({ _getAccountDataKey })
+  }
+
+  readAccountData = () => {
+    const { Account } = this.props.drizzleState.contracts
+    const accountData = Account.account[this.state._getAccountDataKey]
+    return accountData && accountData.value
+  }
+
+  restoreAccountData = accountData => {
+    if (accountData && accountData.publicKey && !this.state.input.publicKey) {
+      const accountProperties = JSON.parse(accountData.data)
+      const input = {
+        accountType: accountData.accountType,
+        accountName: accountProperties.accountName,
+        publicKey: accountData.publicKey,
+        privateKey: 'Hanya Anda yang menyimpan private key',
+        accountProperties: accountProperties,
+      }
+      this.setState({ input })
+    }
   }
 }
 
