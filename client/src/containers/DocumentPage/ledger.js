@@ -9,12 +9,6 @@ class DocumentLedger {
     if (drizzleState === null) drizzleState = _drizzleState
   }
 
-  // function createDocument(address _owner, string memory _data) public {
-  //   totalDocument++;
-  //   OwnedDocumentData memory _tmp = OwnedDocumentData(totalDocument, _data);
-  //   ownedDocumentList[_owner].push(_tmp);
-  // }
-
   getDocumentRecipientAccountInfo = address => {
     const contract = drizzle.contracts.Account
     const _getAccountDataKey = contract.methods['account'].cacheCall(address)
