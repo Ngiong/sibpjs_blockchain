@@ -1,11 +1,11 @@
 pragma solidity ^0.5.0;
-pragma experimental ABIEncoderV2;
 
 contract Document {
-  uint256 public totalDocument = 0;
-  uint256 public totalAuthorizedDocument = 0;
-  mapping (address => OwnedDocumentData[]) public ownedDocumentList;
-  mapping (address => AuthorizedDocumentData[]) public authorizedDocumentList;
+  uint256 public totalDocument;
+  mapping (uint256 => string) public document;
+  mapping (uint256 => address) public documentOwner;
+  mapping (address => uint256[]) public ownedDocumentList;
+  mapping (address => uint256[]) public authorizedDocumentList;
 
   struct OwnedDocumentData {
     uint256 id;
@@ -20,21 +20,23 @@ contract Document {
 
   function createDocument(address _owner, string memory _data) public {
     totalDocument++;
-    OwnedDocumentData memory _tmp = OwnedDocumentData(totalDocument, _data);
-    ownedDocumentList[_owner].push(_tmp);
+    document[totalDocument] = _data;
+    documentOwner[totalDocument] = _owner;
+    ownedDocumentList[_owner].push(totalDocument);
   }
 
-  function authorizeDocument(address _recipient, address _granter, string memory _data) public {
-    totalAuthorizedDocument++;
-    AuthorizedDocumentData memory _tmp = AuthorizedDocumentData(totalAuthorizedDocument, _granter, _data);
-    authorizedDocumentList[_recipient].push(_tmp);
+  function authorizeDocument(address _requester, address _granter, string memory _data) public {
+    totalDocument++;
+    document[totalDocument] = _data;
+    documentOwner[totalDocument] = _granter;
+    authorizedDocumentList[_requester].push(totalDocument);
   }
 
-  function getOwnedDocumentList(address _account) public view returns (OwnedDocumentData[] memory) {
+  function getOwnedDocumentList(address _account) public view returns (uint256[] memory) {
     return ownedDocumentList[_account];
   }
 
-  function getAuthorizedDocumentList(address _account) public view returns (AuthorizedDocumentData[] memory) {
+  function getAuthorizedDocumentList(address _account) public view returns (uint256[] memory) {
     return authorizedDocumentList[_account];
   }
 }

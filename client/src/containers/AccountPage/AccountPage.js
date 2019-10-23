@@ -28,7 +28,7 @@ class AccountPage extends React.Component {
   componentDidMount = () => {
     const contract = this.props.drizzle.contracts.Account
     const accountAddress = this.props.drizzleState.accounts[0]
-    const _getAccountDataKey = contract.methods['accounts'].cacheCall(accountAddress)
+    const _getAccountDataKey = contract.methods['account'].cacheCall(accountAddress)
     this.setState({ _getAccountDataKey })
   }
 
@@ -89,7 +89,7 @@ class AccountPage extends React.Component {
 
   retrieveStoredContract = () => {
     const { Account } = this.props.drizzleState.contracts
-    const accountData = Account.accounts[this.state._getAccountDataKey]
+    const accountData = Account.account[this.state._getAccountDataKey]
     const value = accountData && accountData.value
 
     if (value && value.publicKey && !this.state.input.publicKey) {

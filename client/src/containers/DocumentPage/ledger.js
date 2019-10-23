@@ -17,7 +17,7 @@ class DocumentLedger {
 
   getDocumentRecipientAccountInfo = address => {
     const contract = drizzle.contracts.Account
-    const _getAccountDataKey = contract.methods['accounts'].cacheCall(address)
+    const _getAccountDataKey = contract.methods['account'].cacheCall(address)
     return _getAccountDataKey
   }
 
@@ -31,6 +31,12 @@ class DocumentLedger {
     const contract = drizzle.contracts.Document
     const transactionStackId = contract.methods['createDocument'].cacheSend(owner, cipher)
     return transactionStackId
+  }
+
+  getOwnedDocumentList = address => {
+    const contract = drizzle.contracts.Document
+    const _getOwnedDocumentListDataKey = contract.methods['getOwnedDocumentList'].cacheCall(address)
+    return _getOwnedDocumentListDataKey
   }
 }
 

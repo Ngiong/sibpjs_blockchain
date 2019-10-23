@@ -4,28 +4,33 @@ class LoginInfoBar extends React.Component {
   state = { _getAccountDataKey: null }
 
   componentDidMount = () => {
-    const { drizzle, drizzleState } = this.props
-    const contract = drizzle.contracts.Account
-    const accountAddress = drizzleState.accounts[0]
-
-    const _getAccountDataKey = contract.methods['accounts'].cacheCall(accountAddress)
+    const _getAccountDataKey = this.retrieveAccountData()
     this.setState({ _getAccountDataKey })
   }
 
   render() {
-    let { _getAccountDataKey } = this.state
-
-    const { Account } = this.props.drizzleState.contracts
-    const accountData = Account.accounts[_getAccountDataKey]
-    const value = accountData && accountData.value
-
     const { drizzleState } = this.props
+    const accountData = this.readAccountData()
     const accountAddress = drizzleState.accounts[0]
 
     return <div>
       <p>Anda login sebagai: {accountAddress}</p>
-      <p>AccountData yg tersimpan: {JSON.stringify(value)}</p>
+      <p>AccountData yg tersimpan: {JSON.stringify(accountData)}</p>
     </div>
+  }
+
+  retrieveAccountData = () => {
+    const { drizzle, drizzleState } = this.props
+    const accountAddress = drizzleState.accounts[0]
+    const _getAccountDataKey = drizzle.contracts.Account.methods['account'].cacheCall(accountAddress)
+    return _getAccountDataKey
+  }
+
+  readAccountData = () => {
+    let { _getAccountDataKey } = this.state
+    const accountData = this.props.drizzleState.contracts.Account.account[_getAccountDataKey]
+    const value = accountData && accountData.value
+    return value
   }
 }
 
