@@ -1,5 +1,4 @@
 pragma solidity ^0.5.0;
-pragma experimental ABIEncoderV2;
 
 contract AccessRequest {
   uint256 public totalRequest = 0;
@@ -24,6 +23,10 @@ contract AccessRequest {
     AccessRequestData memory _tmp = accessRequest[_id];
     _tmp.completed = true;
     accessRequest[_id] = _tmp;
+
+    uint256[] memory _acList = accessRequestList[_tmp.granter];
+    for (uint i = 0; i < _acList.length; i++) if (_acList[i] == _id) _acList[i] = -_id;
+    accessRequestList[_tmp.granter] = _acList;
   }
 
   function getAccessRequestList(address _account) public view returns (uint256[] memory) {
