@@ -2,7 +2,9 @@ import React from 'react'
 import LoginInfoBar from '../containers/LoginInfoBar'
 
 import { BrowserRouter as Router } from 'react-router-dom'
-import { getRoutes, Menu } from './routes'
+import { getRoutes } from './routes'
+
+import NavigationBar from '../containers/NavigationBar'
 
 import './App.css'
 
@@ -39,7 +41,7 @@ class App extends React.Component {
     return (
       <Router>
         <LoginInfoBar {...drizzleProps} />
-        <Menu />
+        <NavigationBar />
         {routes}
       </Router>
     )

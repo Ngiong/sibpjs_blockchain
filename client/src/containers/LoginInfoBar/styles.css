@@ -1,0 +1,55 @@
+.login-info-bar {
+}
+
+.login-info-bar-navbar {
+  height: 64px;
+  background: #284B8C;
+  display: flex;
+  align-items: center;
+}
+
+.login-info-bar-navbar-menu-icon {
+  height: 23px;
+  margin-top: auto; margin-bottom: auto;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.login-info-bar-sidebar {
+  width: 250px;
+  position: absolute;
+  left: 0; top: 0;
+  height: 100vh;
+  background: gainsboro;
+  z-index: 100;
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.login-info-bar-sidebar-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.login-info-bar-profile {
+  margin-top: 20px;
+  text-align: center;
+  padding: 5px;
+}
+
+.login-info-bar-profile-image {
+  width: 85px;
+}
+
+.login-info-bar-profile-accountName {
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.login-info-bar-profile-accountAddress {
+  font-size: 12px;
+  word-break: break-word;
+  padding: 0 40px;
+  margin-top: 5px;
+}

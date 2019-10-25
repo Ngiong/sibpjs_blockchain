@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import { generateRSAKeyPair } from './rsa'
 import AccountLedger from './ledger'
+import './styles.css'
 
 const FIELD = {
   ACCOUNT_TYPE: 'accountType',
@@ -49,7 +50,7 @@ class AccountPage extends ReactDrizzleComponent {
       <div><input type='text' value={accountProperties.address} onChange={this.handlePropertyChange.bind(this, FIELD.ADDRESS)} /></div>
     </div>
 
-    return <div>
+    return <div className='account-page-container'>
       <h1>Account Page</h1>
       <div>
         <div>Account Type: </div>

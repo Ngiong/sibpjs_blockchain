@@ -1,0 +1,9 @@
+.navigation-bar {
+}
+
+.navigation-bar-menu {
+  height: 64px;
+  background: #284B8C;
+  position: fixed;
+  bottom: 0;
+}
