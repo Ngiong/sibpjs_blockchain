@@ -21,6 +21,7 @@ const FIELD = {
 const transformInputValue = (field, value) => {
   switch (field) {
     case FIELD.BIRTHDAY: return value
+    case FIELD.ACCOUNT_NAME: return value
     default: return value.target.value
   }
 }
