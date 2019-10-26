@@ -16,8 +16,6 @@ class NavigationItem extends React.Component {
 
     let itemClass = 'navigation-bar-menu-item'
 
-    const activeLine = this.props.active ? <hr className='navigation-bar-menu-item-active-line' /> : null
-
     return <NavLink to={this.props.link} activeClassName='navigation-bar-menu-item-active'>
       <div className={itemClass}>
         <img src={img} className='navigation-bar-menu-item-icon' />
