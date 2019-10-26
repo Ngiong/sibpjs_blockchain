@@ -1,0 +1,18 @@
+.home-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 2em 0;
+  color: #284B8C;
+}
+
+.home-page-logo {
+  width: 40%;
+  margin: 1em 0;
+}
+
+.home-page-welcome {
+  font-size: 2.2em;
+  font-weight: 700;
+}
