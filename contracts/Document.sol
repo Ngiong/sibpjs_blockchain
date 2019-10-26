@@ -39,4 +39,14 @@ contract Document {
   function getAuthorizedDocumentList(address _account) public view returns (uint256[] memory) {
     return authorizedDocumentList[_account];
   }
+
+  function updateDocument(uint256 _id, string memory _data) public { 
+    require(msg.sender == documentOwner[_id], "unauthorized");
+    document[_id] = _data;
+  }
+
+  function showSender() public view returns (address)  
+  {  
+    return (msg.sender);  
+  }
 }
