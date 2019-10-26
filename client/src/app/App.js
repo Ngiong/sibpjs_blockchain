@@ -6,6 +6,8 @@ import { getRoutes } from './routes'
 
 import NavigationBar from '../containers/NavigationBar'
 
+import MomentUtils from '@date-io/moment';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import './App.css'
 
 class App extends React.Component {
@@ -39,11 +41,13 @@ class App extends React.Component {
     const routes = getRoutes(drizzleProps)
 
     return (
-      <Router>
-        <LoginInfoBar {...drizzleProps} />
-        <div style={{ padding: '0 20px' }}>{routes}</div>
-        <NavigationBar />
-      </Router>
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Router>
+          <LoginInfoBar {...drizzleProps} />
+          <div style={{ padding: '0 20px', marginBottom: 100 }}>{routes}</div>
+          <NavigationBar />
+        </Router>
+      </MuiPickersUtilsProvider>
     )
   }
 }

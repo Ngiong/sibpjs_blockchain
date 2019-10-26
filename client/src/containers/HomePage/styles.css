@@ -5,6 +5,7 @@
   flex-direction: column;
   padding: 2em 0;
   color: #284B8C;
+  min-height: 60vh;
 }
 
 .home-page-logo {
@@ -14,5 +15,5 @@
 
 .home-page-welcome {
   font-size: 2.2em;
-  font-weight: 700;
+  font-weight: 500;
 }

@@ -4,6 +4,9 @@ import { generateRSAKeyPair } from './rsa'
 import AccountLedger from './ledger'
 import './styles.css'
 
+import TextField from '../../components/TextField'
+import DateField from '../../components/DateField'
+
 const FIELD = {
   ACCOUNT_TYPE: 'accountType',
   ACCOUNT_NAME: 'accountName',
@@ -12,6 +15,14 @@ const FIELD = {
   ACCOUNT_PROPERTIES: 'accountProperties',
   BPJS_IDENTITY_NUMBER: 'bpjsIdentityNumber',
   ADDRESS: 'address',
+  BIRTHDAY: 'birthday',
+}
+
+const transformInputValue = (field, value) => {
+  switch (field) {
+    case FIELD.BIRTHDAY: return value
+    default: return value.target.value
+  }
 }
 
 class AccountPage extends ReactDrizzleComponent {
@@ -24,6 +35,7 @@ class AccountPage extends ReactDrizzleComponent {
       accountProperties: {
         bpjsIdentityNumber: '',
         address: '',
+        birthday: '',
       },
     },
     _getAccountDataKey: null,
@@ -56,9 +68,8 @@ class AccountPage extends ReactDrizzleComponent {
         <div>Account Type: </div>
         <div><input type='text' value={input.accountType} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_TYPE)} /></div>
 
-        <div>Nama: </div>
-        <div><input type='text' value={input.accountName} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_NAME)} /></div>
-
+        {TextField('Nama', this.handleInputChange.bind(this, FIELD.ACCOUNT_NAME))}
+        {DateField('Tanggal Lahir', accountProperties.birthday || new Date(), this.handlePropertyChange.bind(this, FIELD.BIRTHDAY))}
         <hr />
 
         <div>Public Key: </div>
@@ -81,16 +92,16 @@ class AccountPage extends ReactDrizzleComponent {
     </div>
   }
 
-  handleInputChange = (field, event) => {
+  handleInputChange = (field, value) => {
     let newInput = { ...this.state.input }
-    newInput[field] = event.target.value
+    newInput[field] = transformInputValue(field, value)
     this.setState({ input: newInput })
   }
 
-  handlePropertyChange = (field, event) => {
+  handlePropertyChange = (field, value) => {
     let newInput = { ...this.state.input }
     let newProperties = { ...this.state.input.accountProperties }
-    newProperties[field] = event.target.value
+    newProperties[field] = transformInputValue(field, value)
     newInput.accountProperties = newProperties
     this.setState({ input: newInput })
   }
