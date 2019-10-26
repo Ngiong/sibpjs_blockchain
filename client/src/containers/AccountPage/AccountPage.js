@@ -18,14 +18,6 @@ const FIELD = {
   BIRTHDAY: 'birthday',
 }
 
-const transformInputValue = (field, value) => {
-  switch (field) {
-    case FIELD.BIRTHDAY: return value
-    case FIELD.ACCOUNT_NAME: return value
-    default: return value.target.value
-  }
-}
-
 class AccountPage extends ReactDrizzleComponent {
   state = {
     input: {
@@ -53,24 +45,24 @@ class AccountPage extends ReactDrizzleComponent {
     let { input } = this.state
     let { accountProperties } = input
 
-    const regularSection = <div>
-      <div>Nomor BPJS: </div>
-      <div><input type='text' value={accountProperties.bpjsIdentityNumber} onChange={this.handlePropertyChange.bind(this, FIELD.BPJS_IDENTITY_NUMBER)} /></div>
-    </div>
+    const regularSection = input.accountType === 'REGULAR' ? <div>
+      {TextField('Nama', input.accountName, this.handleInputChange.bind(this, FIELD.ACCOUNT_NAME))}
+      {TextField('Nomor BPJS', accountProperties.bpjsIdentityNumber, this.handlePropertyChange.bind(this, FIELD.BPJS_IDENTITY_NUMBER))}
+      {DateField('Tanggal Lahir', accountProperties.birthday || new Date(), this.handlePropertyChange.bind(this, FIELD.BIRTHDAY))}
+    </div> : null
 
-    const healthProviderSection = <div>
-      <div>Alamat Instansi: </div>
-      <div><input type='text' value={accountProperties.address} onChange={this.handlePropertyChange.bind(this, FIELD.ADDRESS)} /></div>
-    </div>
+    const healthProviderSection = input.accountType === 'HEALTH_PROVIDER' ? <div>
+      {TextField('Nama Instansi', input.accountName, this.handleInputChange.bind(this, FIELD.ACCOUNT_NAME))}
+      {TextField('Alamat Instansi', accountProperties.address, this.handlePropertyChange.bind(this, FIELD.ADDRESS))}
+    </div> : null
 
     return <div className='account-page-container'>
       <h1>Account Page</h1>
       <div>
-        <div>Account Type: </div>
-        <div><input type='text' value={input.accountType} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_TYPE)} /></div>
+        {TextField('Tipe Akun', input.accountType, this.handleInputChange.bind(this, FIELD.ACCOUNT_TYPE))}
+        { regularSection }
+        { healthProviderSection }
 
-        {TextField('Nama', this.handleInputChange.bind(this, FIELD.ACCOUNT_NAME))}
-        {DateField('Tanggal Lahir', accountProperties.birthday || new Date(), this.handlePropertyChange.bind(this, FIELD.BIRTHDAY))}
         <hr />
 
         <div>Public Key: </div>
@@ -83,8 +75,6 @@ class AccountPage extends ReactDrizzleComponent {
 
         <hr />
 
-        { input.accountType !== 'HEALTH_PROVIDER' ? regularSection : healthProviderSection }
-
         <div onClick={this.handleSubmitButtonClick}>Submit</div>
 
         <hr />
@@ -95,14 +85,14 @@ class AccountPage extends ReactDrizzleComponent {
 
   handleInputChange = (field, value) => {
     let newInput = { ...this.state.input }
-    newInput[field] = transformInputValue(field, value)
+    newInput[field] = value
     this.setState({ input: newInput })
   }
 
   handlePropertyChange = (field, value) => {
     let newInput = { ...this.state.input }
     let newProperties = { ...this.state.input.accountProperties }
-    newProperties[field] = transformInputValue(field, value)
+    newProperties[field] = value
     newInput.accountProperties = newProperties
     this.setState({ input: newInput })
   }

@@ -6,9 +6,18 @@ import { getRoutes } from './routes'
 
 import NavigationBar from '../containers/NavigationBar'
 
-import MomentUtils from '@date-io/moment';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment'
+import { MuiThemeProvider } from '@material-ui/core'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import { createMuiTheme } from '@material-ui/core/styles'
 import './App.css'
+
+const muiTheme = createMuiTheme({
+  typography: {
+    fontFamily: '\"Do Hyeon\", \"Ubuntu\"',
+    fontSize: 18
+  }
+})
 
 class App extends React.Component {
   state = { drizzleLoading: true, drizzleState: null }
@@ -41,13 +50,16 @@ class App extends React.Component {
     const routes = getRoutes(drizzleProps)
 
     return (
-      <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Router>
-          <LoginInfoBar {...drizzleProps} />
-          <div style={{ padding: '0 20px', marginBottom: 100 }}>{routes}</div>
-          <NavigationBar />
-        </Router>
-      </MuiPickersUtilsProvider>
+      <MuiThemeProvider theme={muiTheme}>
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          <Router>
+            <LoginInfoBar {...drizzleProps} />
+            <div style={{ maxWidth: 500, padding: '0 20px', 
+                margin: 'auto', marginBottom: 100 }}>{routes}</div>
+            <NavigationBar />
+          </Router>
+        </MuiPickersUtilsProvider>
+      </MuiThemeProvider>
     )
   }
 }
