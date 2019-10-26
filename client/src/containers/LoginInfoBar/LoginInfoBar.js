@@ -33,7 +33,8 @@ class LoginInfoBar extends React.Component {
     </div> : null
 
     let navigation = this.state.sidebarOpened ? <div className='login-info-bar-navigation'>
-      <Link to="/account"><div onClick={this.toggleSidebarOpen}>Ubah Profil</div></Link>
+      <Link to='/'><div onClick={this.toggleSidebarOpen} className='login-info-bar-navigation-item'>Home</div></Link>
+      <Link to='/account'><div onClick={this.toggleSidebarOpen} className='login-info-bar-navigation-item'>Ubah Profil</div></Link>
       <p>(cuma buat debug) AccountData yg tersimpan: {JSON.stringify(accountData)}</p>
     </div> : null
 
