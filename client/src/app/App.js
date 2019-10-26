@@ -41,7 +41,7 @@ class App extends React.Component {
     return (
       <Router>
         <LoginInfoBar {...drizzleProps} />
-        {routes}
+        <div style={{ padding: '0 20px' }}>{routes}</div>
         <NavigationBar />
       </Router>
     )

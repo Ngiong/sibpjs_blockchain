@@ -3,7 +3,7 @@
 
 .navigation-bar-menu {
   height: 100px;
-  width: 400px;
+  width: 600px;
   background: #284B8C;
   position: fixed;
   bottom: 0;
@@ -12,7 +12,7 @@
   justify-content: space-evenly;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 600px) {
   .navigation-bar-menu {
     width: 100vw;
   }
@@ -46,7 +46,7 @@
 }
 
 .navigation-bar-menu-item-label {
-  font-size: 0.7em;
+  font-size: 0.8em;
   color: white;
   font-weight: 500;
   padding-top: 5px;
