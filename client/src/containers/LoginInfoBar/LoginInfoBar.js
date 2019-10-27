@@ -21,6 +21,7 @@ class LoginInfoBar extends React.Component {
   render() {
     const { drizzleState } = this.props
     const accountData = this.readAccountData()
+    const accountProperties = JSON.parse(accountData && accountData.data || '{}') || {}
     const accountAddress = drizzleState.accounts[0]
 
     let navbar = <div className='login-info-bar-navbar'>
@@ -30,7 +31,7 @@ class LoginInfoBar extends React.Component {
 
     let profile = this.state.sidebarOpened ? <div className='login-info-bar-profile'>
       <img src={profileImg} className='login-info-bar-profile-image' />
-      <div className='login-info-bar-profile-accountName'>{accountData.accountName || 'User-100001'}</div>
+      <div className='login-info-bar-profile-accountName'>{accountProperties.accountName}</div>
       <div className='login-info-bar-profile-accountAddress'>Address: {accountAddress}</div>
     </div> : null
 
