@@ -193,20 +193,20 @@ class AccountPage extends ReactDrizzleComponent {
     if (accountData && accountData.publicKey && !this.state.input.publicKey) {
       const accountProperties = JSON.parse(accountData.data)
       const input = {
-        accountType: accountData.accountType,
-        accountName: accountData.accountName || accountProperties.accountName,
-        accountAddress: accountData.accountAddress,
-        accountPhoneNumber: accountData.accountPhoneNumber,
-        accountBPJS: accountProperties.accountBPJS,
-        accountBirthdate: accountProperties.accountBirthdate,
+        accountType: accountData.accountType || 'REGULAR',
+        accountName: accountData.accountName || accountProperties.accountName || '',
+        accountAddress: accountData.accountAddress || '',
+        accountPhoneNumber: accountData.accountPhoneNumber || '',
+        accountBPJS: accountProperties.accountBPJS || '',
+        accountBirthdate: accountProperties.accountBirthdate || '',
         accountGender: accountProperties.accountGender || 'MALE',
-        accountLicenseNumber: accountProperties.accountLicenseNumber,
-        accountLicenseValidity: accountProperties.accountLicenseValidity,
-        accountPICName: accountProperties.accountPICName,
-        accountPICNPWP: accountProperties.accountPICNPWP,
-        accountPICRole: accountProperties.accountPICRole,
-        accountPICPhoneNumber: accountProperties.accountPICPhoneNumber,
-        accountPublicKey: accountData.accountPublicKey,
+        accountLicenseNumber: accountProperties.accountLicenseNumber || '',
+        accountLicenseValidity: accountProperties.accountLicenseValidity || '',
+        accountPICName: accountProperties.accountPICName || '',
+        accountPICNPWP: accountProperties.accountPICNPWP || '',
+        accountPICRole: accountProperties.accountPICRole || '',
+        accountPICPhoneNumber: accountProperties.accountPICPhoneNumber || '',
+        accountPublicKey: accountData.accountPublicKey || '',
         accountPrivateKey: 'Hanya Anda yang menyimpan private key.',
       }
       this.setState({ input })
