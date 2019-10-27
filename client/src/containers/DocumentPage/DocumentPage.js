@@ -2,6 +2,9 @@ import React from 'react'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import DocumentLedger from './ledger'
 import { decryptRSA } from './rsa'
+import './styles.css'
+
+import notFoundImg from './assets/not-found.png'
 
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
@@ -14,7 +17,6 @@ const FIELD = {
 
 class DocumentPage extends ReactDrizzleComponent {
   state = {
-    mode: 'CREATE', // 'LIST', 'VIEW'
     input: {
       documentType: 'INSURANCE_POLICY',
       documentNumber: '',
@@ -64,21 +66,27 @@ class DocumentPage extends ReactDrizzleComponent {
     const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
     const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
-    const listSection = <div>
+    const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
+      <img src={notFoundImg} style={{ width: '50%' }} />
+      <h1>RSA Private Key tidak ditemukan.</h1><br/>
+      Silakan masukkan RSA Private Key Anda pada halaman Profil.
+    </div>
+
+    const listSection = this.state.input.accountPrivateKey ? <div>
       <h1>Your Document List</h1>
       <div>Your Private Key: </div>
       <div><textarea value={input.accountPrivateKey} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_PRIVATE_KEY)} /></div>
       {rOwnedDocumentList}
-    </div>
+    </div> : invalidPrivateKeyMessage
 
     const viewSection = <div>
       <h1>Document #[documentId]</h1>
     </div>
 
     return <div>
-      {createSection}
-      {listSection}
-      {viewSection}
+      {this.props.mode === 'CREATE' && createSection}
+      {this.props.mode === 'LIST' && listSection}
+      {this.props.mode === 'VIEW' && viewSection}
     </div>
   }
 
