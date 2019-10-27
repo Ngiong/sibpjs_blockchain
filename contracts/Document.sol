@@ -1,5 +1,4 @@
 pragma solidity ^0.5.0;
-pragma experimental ABIEncoderV2;
 
 contract Document {
   uint256 public totalDocument;
@@ -8,20 +7,13 @@ contract Document {
   mapping (address => uint256[]) public ownedDocumentList; //address to list of document ids
   mapping (address => uint256[]) public authorizedDocumentList; //address to list of authorized documents
   
-  mapping(address => DocumentData[]) public ownedDocumentOfAddress;
-  mapping(address => DocumentData[]) public authorizedDocumentOfAddress;
+  mapping(uint256 => DocumentData) public ownedDocumentToId;
 
   struct DocumentData {
     uint256 id;
     string documentType;
     string data;
     string signature;
-  }
-
-  // TODO: if unused, delete this
-  struct OwnedDocumentData {
-    uint256 id;
-    string data; // TODO: nambah digital signature
   }
 
   // TODO: if unused, delete this
@@ -57,16 +49,7 @@ contract Document {
     createDocument(_owner, _data);
 
     //assume totalDocument is incremented in createDocument() method
-    DocumentData[] storage currentDocuments = ownedDocumentOfAddress[_owner];
     DocumentData memory newDocument = DocumentData(totalDocument, _type, _data, "signature");
-    currentDocuments.push(newDocument);
-  }
-
-  function getOwnedDocumentOf(address _owner) public view returns (DocumentData[] memory) {
-    return ownedDocumentOfAddress[_owner];
-  }
-
-  function getAuthorizedDocumentOf(address _owner) public view returns (DocumentData[] memory) {
-    return authorizedDocumentOfAddress[_owner];
+    ownedDocumentToId[totalDocument] = newDocument;
   }
 }
