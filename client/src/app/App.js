@@ -54,8 +54,7 @@ class App extends React.Component {
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <Router>
             <LoginInfoBar {...drizzleProps} />
-            <div style={{ maxWidth: 500, padding: '0 20px', 
-                margin: 'auto', marginBottom: 100 }}>{routes}</div>
+            <div style={{ maxWidth: 500, padding: '64px 20px 100px 20px', margin: 'auto' }}>{routes}</div>
             <NavigationBar />
           </Router>
         </MuiPickersUtilsProvider>

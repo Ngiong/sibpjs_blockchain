@@ -6,6 +6,7 @@ import './styles.css'
 
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
+import SelectField from '../../components/SelectField'
 
 const FIELD = {
   ACCOUNT_TYPE: 'accountType',
@@ -16,6 +17,12 @@ const FIELD = {
   BPJS_IDENTITY_NUMBER: 'bpjsIdentityNumber',
   ADDRESS: 'address',
   BIRTHDAY: 'birthday',
+}
+
+const ACCOUNT_TYPE = {
+  REGULAR: 'Regular',
+  HEALTH_PROVIDER: 'Penyedia Layanan Kesehatan',
+  INSURANCE_COMPANY: 'Perusahaan Asuransi'
 }
 
 class AccountPage extends ReactDrizzleComponent {
@@ -59,17 +66,17 @@ class AccountPage extends ReactDrizzleComponent {
     return <div className='account-page-container'>
       <h1>Account Page</h1>
       <div>
-        {TextField('Tipe Akun', input.accountType, this.handleInputChange.bind(this, FIELD.ACCOUNT_TYPE))}
+        { SelectField('Tipe Akun', ACCOUNT_TYPE, input.accountType, this.handleInputChange.bind(this, FIELD.ACCOUNT_TYPE)) }
         { regularSection }
         { healthProviderSection }
 
         <hr />
 
         <div>Public Key: </div>
-        <div><pre>{input.publicKey}</pre></div>
+        <div><pre style={{ overflowY: 'auto' }}>{input.publicKey}</pre></div>
 
         <div>Public Key: </div>
-        <div><pre>{input.privateKey}</pre></div>
+        <div><pre style={{ overflowY: 'auto' }}>{input.privateKey}</pre></div>
         
         <div onClick={this.handleGenerateButtonClick}>Generate</div>
 

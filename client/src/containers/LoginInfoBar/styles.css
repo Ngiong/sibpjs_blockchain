@@ -3,9 +3,18 @@
 
 .login-info-bar-navbar {
   height: 64px;
+  width: 600px;
   background: #284B8C;
   display: flex;
   align-items: center;
+  position: fixed;
+  top: 0;
+}
+
+@media (max-width: 600px) {
+  .login-info-bar-navbar {
+    width: 100vw;
+  }
 }
 
 .login-info-bar-navbar-menu-icon {
