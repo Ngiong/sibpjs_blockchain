@@ -156,7 +156,7 @@ class AccountPage extends ReactDrizzleComponent {
           {Checkbox(input.accountAcceptAgreement, <span style={{ fontSize: 14 }}>
             Saya setuju dengan syarat dan ketentuan yang berlaku pada aplikasi SiBPJS.
           </span>, this.handleInputChange.bind(this, FIELD.ACCOUNT_ACCEPT_AGREEMENT), 'primary')}
-          {Button('Simpan', this.handleSubmitButtonClick, 'primary', 'small', !input.accountAcceptAgreement)}
+          {Button('Simpan', this.handleSubmitButtonClick, 'primary', 'small', !this.completedForm())}
         </div>
       </div>
     </div>
@@ -222,8 +222,33 @@ class AccountPage extends ReactDrizzleComponent {
   }
 
   handleStorePrivateKey = privateKey => {
+    if (!privateKey) return
     this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, privateKey)
     localStorage.setItem('accountPrivateKey', privateKey)
+  }
+
+  completedForm = () => {
+    const { input } = this.state
+    const validAccountType = Object.keys(ACCOUNT_TYPE).find(s => s === input.accountType)
+    if (!validAccountType) return false
+
+    const allFilled = fieldNames => fieldNames
+      .map(fieldName => input[fieldName])
+      .reduce((prev, item) => prev && item, true)
+
+    let storedFieldForData = []
+    if (input.accountType === 'REGULAR')
+      storedFieldForData = ['accountBPJS', 'accountBirthdate', 'accountGender']
+    else
+      storedFieldForData = ['accountLicenseNumber', 'accountLicenseValidity',
+      'accountPICName', 'accountPICNPWP', 'accountPICRole', 'accounPICPhoneNumber']
+
+    const validProperties = allFilled(storedFieldForData)
+    if (!validProperties) return false
+
+    const generalFields = ['accountName', 'accountAddress', 'accountPhoneNumber', 'accountPublicKey', 'accountAcceptAgreement']
+    const validGeneralFields = allFilled(generalFields)
+    return validGeneralFields
   }
 }
 
