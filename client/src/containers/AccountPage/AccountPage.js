@@ -11,6 +11,8 @@ import Label from '../../components/Label'
 import Button from '../../components/Button'
 import Checkbox from '../../components/Checkbox'
 
+import PrivateKeyDialog from './privateKeyDialog'
+
 const FIELD = {
   ACCOUNT_TYPE: 'accountType',
   ACCOUNT_NAME: 'accountName',
@@ -29,7 +31,9 @@ const FIELD = {
   ACCOUNT_PIC_PHONE_NUMBER: 'accountPICPhoneNumber',
 
   ACCOUNT_PUBLIC_KEY: 'accountPublicKey',
-  ACCOUNT_PUBLIC_KEY: 'accountPrivateKey',
+  ACCOUNT_PRIVATE_KEY: 'accountPrivateKey',
+
+  ACCOUNT_ACCEPT_AGREEMENT: 'accountAcceptAgreement',
 }
 
 const ACCOUNT_TYPE = {
@@ -49,17 +53,18 @@ class AccountPage extends ReactDrizzleComponent {
       accountPhoneNumber: '',
       accountBPJS: '',
       accountBirthdate: '',
-      accountGender: 'MALE',
+      accountGender: '',
       accountLicenseNumber: '',
       accountLicenseValidity: '',
       accountPICName: '',
       accountPICNPWP: '',
       accountPICRole: '',
       accountPICPhoneNumber: '',
-      publicKey: '',
-      privateKey: '',
+      accountPublicKey: '',
+      accountPrivateKey: '',
       accountAcceptAgreement: false,
     },
+    privateKeyDialog: false,
     _getAccountDataKey: null,
     _transactionStackId: null,
   }
@@ -68,6 +73,7 @@ class AccountPage extends ReactDrizzleComponent {
 
   componentDidUpdate = prevProps => {
     this._drizzleStateDidUpdate(prevProps, '_getAccountDataKey', 'Account', 'account', this.restoreAccountData)
+    this._drizzleStateTxSuccess(prevProps, this.state._transactionStackId, () => this.handleStorePrivateKey(this.state.input.accountPrivateKey))
   }
 
   render = () => {
@@ -120,14 +126,22 @@ class AccountPage extends ReactDrizzleComponent {
     const rsaSection = <div>
       <div className='account-page-section-title'>RSA Key</div>
       <div>
-        {Button('Buat Kunci RSA', this.handleGenerateButtonClick, 'primary', 'small', false, 'outlined')}
+        { !input.accountPublicKey &&
+          Button('Buat Kunci RSA', this.handleGenerateButtonClick, 'primary', 'small', false, 'outlined') }
       </div>
       { input.accountPublicKey && <div>
         {Label('Public Key')}
         <div><pre className='account-page-section-rsa'>{input.accountPublicKey}</pre></div>
         {Label('Private Key')}
-        <div><pre className='account-page-section-rsa'>{input.accountPrivateKey}</pre></div>
-      </div>}
+        <div><pre className='account-page-section-rsa'>{input.accountPrivateKey || 'Private key belum tersimpan pada browser Anda.'}</pre>
+        { !input.accountPrivateKey &&
+          Button('Input Manual Private Key', () => this.setState({ privateKeyDialog: true }), 'primary', 'medium', false, 'text') }
+        { !input.accountPrivateKey &&
+          <PrivateKeyDialog visible={this.state.privateKeyDialog} publicKey={input.accountPublicKey}
+                            onClose={() => this.setState({ privateKeyDialog: false })}
+                            onSubmit={this.handleStorePrivateKey} /> }
+        </div>
+      </div> }
     </div>
 
     return <div className='account-page-container'>
@@ -139,12 +153,11 @@ class AccountPage extends ReactDrizzleComponent {
         { insuranceCompanySection }
         { rsaSection }
         <div style={{ marginTop: 36 }}>
-          {Checkbox(this.state.accountAcceptAgreement, <span style={{ fontSize: 14 }}>
+          {Checkbox(input.accountAcceptAgreement, <span style={{ fontSize: 14 }}>
             Saya setuju dengan syarat dan ketentuan yang berlaku pada aplikasi SiBPJS.
-          </span>, () => this.setState({ accountAcceptAgreement: !this.state.accountAcceptAgreement}), 'primary')}
-          {Button('Simpan', this.handleSubmitButtonClick, 'primary', 'small', !this.state.accountAcceptAgreement)}
+          </span>, this.handleInputChange.bind(this, FIELD.ACCOUNT_ACCEPT_AGREEMENT), 'primary')}
+          {Button('Simpan', this.handleSubmitButtonClick, 'primary', 'small', !input.accountAcceptAgreement)}
         </div>
-        <div>Status Transaksi Anda: { this.getTransactionStatus() }</div>
       </div>
     </div>
   }
@@ -168,13 +181,6 @@ class AccountPage extends ReactDrizzleComponent {
     this.setState({ _transactionStackId })
   }
 
-  getTransactionStatus = () => {
-    if (this.state._transactionStackId === null) return 'Not connected.'
-    const { drizzle, drizzleState } = this.props
-    const ledger = new AccountLedger(drizzle, drizzleState)
-    ledger.getTransactionStatus(this.state._transactionStackId)
-  }
-
   retrieveAccountData = () => {
     const contract = this.props.drizzle.contracts.Account
     const accountAddress = this.props.drizzleState.accounts[0]
@@ -190,8 +196,9 @@ class AccountPage extends ReactDrizzleComponent {
   }
 
   restoreAccountData = accountData => {
-    if (accountData && accountData.publicKey && !this.state.input.publicKey) {
+    if (accountData && accountData.accountPublicKey && !this.state.input.accountPublicKey) {
       const accountProperties = JSON.parse(accountData.data)
+      const accountPrivateKey = localStorage.getItem('accountPrivateKey') || ''
       const input = {
         accountType: accountData.accountType || 'REGULAR',
         accountName: accountData.accountName || accountProperties.accountName || '',
@@ -199,7 +206,7 @@ class AccountPage extends ReactDrizzleComponent {
         accountPhoneNumber: accountData.accountPhoneNumber || '',
         accountBPJS: accountProperties.accountBPJS || '',
         accountBirthdate: accountProperties.accountBirthdate || '',
-        accountGender: accountProperties.accountGender || 'MALE',
+        accountGender: accountProperties.accountGender || '',
         accountLicenseNumber: accountProperties.accountLicenseNumber || '',
         accountLicenseValidity: accountProperties.accountLicenseValidity || '',
         accountPICName: accountProperties.accountPICName || '',
@@ -207,10 +214,16 @@ class AccountPage extends ReactDrizzleComponent {
         accountPICRole: accountProperties.accountPICRole || '',
         accountPICPhoneNumber: accountProperties.accountPICPhoneNumber || '',
         accountPublicKey: accountData.accountPublicKey || '',
-        accountPrivateKey: 'Hanya Anda yang menyimpan private key.',
+        accountPrivateKey: accountPrivateKey,
+        accountAcceptAgreement: false,
       }
       this.setState({ input })
     }
+  }
+
+  handleStorePrivateKey = privateKey => {
+    this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, privateKey)
+    localStorage.setItem('accountPrivateKey', privateKey)
   }
 }
 

@@ -7,6 +7,7 @@ contract Account {
     string accountPublicKey;
     string accountType;
     string accountName;
+    string accountAddress;
     string accountPhoneNumber;
     string data;
   }
@@ -15,9 +16,10 @@ contract Account {
     string memory _accountPublicKey,
     string memory _accountType,
     string memory _accountName,
+    string memory _accountAddress,
     string memory _accountPhoneNumber,
     string memory _data) public {
 
-    account[_address] = AccountData(_accountPublicKey, _accountType, _accountName, _accountPhoneNumber, _data);
+    account[_address] = AccountData(_accountPublicKey, _accountType, _accountName, _accountAddress, _accountPhoneNumber, _data);
   }
 }

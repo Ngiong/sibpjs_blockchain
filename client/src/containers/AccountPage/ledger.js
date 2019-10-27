@@ -7,18 +7,38 @@ class AccountLedger {
     if (drizzleState === null) drizzleState = _drizzleState
   }
 
+  // function createAccount(address _address,
+  //   string memory _accountPublicKey,
+  //   string memory _accountType,
+  //   string memory _accountName,
+  //   string memory _accountPhoneNumber,
+  //   string memory _data) public {
+
+  //   account[_address] = AccountData(_accountPublicKey, _accountType, _accountName, _accountPhoneNumber, _data);
+  // }
+
   createAccount = input => {
     const contract = drizzle.contracts.Account
     const accountAddress = drizzleState.accounts[0]
 
-    const publicKey = input.publicKey
-    const accountType = input.accountType
-    const data = {
-      ...input.accountProperties,
-      accountName: input.accountName,
-    }
+    let storedFieldForData = []
+    if (input.accountType === 'REGULAR')
+      storedFieldForData = ['accountBPJS', 'accountBirthdate', 'accountGender']
+    else
+      storedFieldForData = ['accountLicenseNumber', 'accountLicenseValidity',
+      'accountPICName', 'accountPICNPWP', 'accountPICRole', 'accounPICPhoneNumber']
 
-    const transactionStackId = contract.methods['createAccount'].cacheSend(accountAddress, publicKey, accountType, JSON.stringify(data))
+    const data = storedFieldForData
+      .reduce((dict, item) => { dict[item] = input[item]; return dict }, {})
+
+    const transactionStackId = contract.methods['createAccount'].cacheSend(
+      accountAddress,
+      input.accountPublicKey,
+      input.accountType,
+      input.accountName,
+      input.accountAddress,
+      input.accountPhoneNumber,
+      JSON.stringify(data))
     return transactionStackId
   }
 

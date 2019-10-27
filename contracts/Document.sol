@@ -8,7 +8,7 @@ contract Document {
   mapping (address => uint256[]) public authorizedDocumentList; //address to list of authorized documents
   
   mapping(uint256 => DocumentData) public ownedDocumentOfId;
-  mapping(string => uint256[]) public documentIdsOfType;
+  // mapping(string => uint256[]) public documentIdsOfType;
 
   struct DocumentData {
     uint256 id;
@@ -55,12 +55,12 @@ contract Document {
     ownedDocumentOfId[newId] = newDocument;
 
     //insert mapping of document type to ids
-    documentIdsOfType[_type].push(newId);
+    // documentIdsOfType[_type].push(newId);
   }
 
-  function getDocumentByType(string memory _type) public view returns (uint256[] memory) {
-    return documentIdsOfType[_type];
-  }
+  // function getDocumentByType(string memory _type) public view returns (uint256[] memory) {
+  //   return documentIdsOfType[_type];
+  // }
 
   function updateDocument(uint256 _id, string memory _data) public{
     require(msg.sender == documentOwner[_id], "unauthorized");

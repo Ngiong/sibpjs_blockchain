@@ -16,8 +16,10 @@ class SelectField extends React.Component {
       </ListItem>
     })
 
+    const _value = this.props.value ? this.props.options[this.props.value] : ''
+
     return <div>
-      <TextField label={this.props.label} value={this.props.options[this.props.value]} style={{ margin: 0 }} fullWidth 
+      <TextField label={this.props.label} value={_value} style={{ margin: 0 }} fullWidth
                  onClick={this.handleTextFieldOnClick} InputProps={{readOnly: true}} margin='dense'  />
       <Dialog open={this.state.dialog} onClose={this.handleOnClose}> 
         <List>{listItems}</List>

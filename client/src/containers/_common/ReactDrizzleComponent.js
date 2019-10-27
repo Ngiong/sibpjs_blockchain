@@ -17,6 +17,22 @@ class ReactDrizzleComponent extends React.Component {
     const result = this.props.drizzleState.contracts[contractName][methodName][dataKey]
     if (result) callback(result.value)
   }
+
+  _drizzleStateTxSuccess = (prevProps, txStackId, successCallback) => {
+    if (txStackId === null) return
+
+    const txHash = this.props.drizzleState.transactionStack[txStackId]
+    if (!txHash) return
+
+    const newState = this.props.drizzleState.transactions[txHash]
+    const prevState = prevProps.drizzleState.transactions[txHash]
+
+    if (JSON.stringify(newState) !== JSON.stringify(prevState)) {
+      const tx = this.props.drizzleState.transactions[txHash]
+      if (!tx) return
+      if (tx.status === 'success') successCallback()
+    }
+  }
 }
 
 export default ReactDrizzleComponent

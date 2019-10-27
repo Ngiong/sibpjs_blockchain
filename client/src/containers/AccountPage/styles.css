@@ -12,3 +12,7 @@ pre.account-page-section-rsa {
   font-size: 12px;
   overflow-y: auto;
 }
+
+.account-page-section-private-key-dialog {
+  font-size: 18px;
+}
