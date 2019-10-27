@@ -15,7 +15,7 @@ class SelectField extends React.Component {
         <ListItemText primary={this.props.options[key]} />
       </ListItem>
     })
-  
+
     return <div>
       <TextField label={this.props.label} value={this.props.options[this.props.value]} style={{ margin: 0 }} fullWidth 
                  onClick={this.handleTextFieldOnClick} InputProps={{readOnly: true}} margin='dense'  />

@@ -1,2 +1,14 @@
 .account-page-container {
 }
+
+.account-page-section-title {
+  font-size: 27px;
+  margin-top: 48px;
+  margin-bottom: 0;
+}
+
+pre.account-page-section-rsa {
+  margin-top: 0;
+  font-size: 12px;
+  overflow-y: auto;
+}
