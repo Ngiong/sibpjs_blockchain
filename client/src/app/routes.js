@@ -1,5 +1,5 @@
 import React from 'react'
-import { Redirect, Route, Link } from 'react-router-dom'
+import { Route, withRouter } from 'react-router-dom'
 
 import AccountPage from '../containers/AccountPage'
 import HomePage from '../containers/HomePage'

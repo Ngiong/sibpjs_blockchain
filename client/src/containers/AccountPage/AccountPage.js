@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import { generateRSAKeyPair } from './rsa'
 import AccountLedger from './ledger'
@@ -73,7 +74,7 @@ class AccountPage extends ReactDrizzleComponent {
 
   componentDidUpdate = prevProps => {
     this._drizzleStateDidUpdate(prevProps, '_getAccountDataKey', 'Account', 'account', this.restoreAccountData)
-    this._drizzleStateTxSuccess(prevProps, this.state._transactionStackId, () => this.handleStorePrivateKey(this.state.input.accountPrivateKey))
+    this._drizzleStateTxSuccess(prevProps, this.state._transactionStackId, this.handleCompletedForm)
   }
 
   render = () => {
@@ -221,6 +222,12 @@ class AccountPage extends ReactDrizzleComponent {
     }
   }
 
+  handleCompletedForm = () => {
+    this.handleStorePrivateKey(this.state.input.accountPrivateKey)
+    window.SHOW_TOAST('Data profil berhasil disimpan.')
+    this.props.history.push('/')
+  }
+
   handleStorePrivateKey = privateKey => {
     if (!privateKey) return
     this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, privateKey)
@@ -252,4 +259,4 @@ class AccountPage extends ReactDrizzleComponent {
   }
 }
 
-export default AccountPage
+export default withRouter(AccountPage)

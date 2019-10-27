@@ -12,6 +12,8 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import { createMuiTheme } from '@material-ui/core/styles'
 import './App.css'
 
+import Toast from '../components/Toast'
+
 const muiTheme = createMuiTheme({
   typography: {
     fontFamily: '\"Do Hyeon\", \"Ubuntu\"',
@@ -20,7 +22,12 @@ const muiTheme = createMuiTheme({
 })
 
 class App extends React.Component {
-  state = { drizzleLoading: true, drizzleState: null }
+  state = {
+    drizzleLoading: true,
+    drizzleState: null,
+    toastVisible: false,
+    toastMessage: '',
+  }
 
   componentDidMount = () => {
     const { drizzle } = this.props
@@ -36,13 +43,17 @@ class App extends React.Component {
         this.setState({ drizzleLoading: false, drizzleState })
       }
     })
+
+    window.SHOW_TOAST = message => {
+      this.setState({ toastVisible: true, toastMessage: message })
+    }
   }
 
   componentWillUnmount = () => this.unsubscribe()
 
   render = () => {
     let { drizzle } = this.props
-    let { drizzleLoading, drizzleState } = this.state
+    let { drizzleLoading, drizzleState, toastVisible, toastMessage } = this.state
 
     if (drizzleLoading) return "Loading Drizzle..."
     const drizzleProps = { drizzle, drizzleState }
@@ -53,6 +64,7 @@ class App extends React.Component {
       <MuiThemeProvider theme={muiTheme}>
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <Router>
+            <Toast visible={toastVisible} message={toastMessage} onClose={this.handleToastClose} />
             <LoginInfoBar {...drizzleProps} />
             <div style={{ maxWidth: 500, padding: '64px 20px 100px 20px', margin: 'auto' }}>{routes}</div>
             <NavigationBar />
@@ -60,6 +72,10 @@ class App extends React.Component {
         </MuiPickersUtilsProvider>
       </MuiThemeProvider>
     )
+  }
+
+  handleToastClose = () => {
+    this.setState({ toastVisible: false, toastMessage: '' })
   }
 }
 
