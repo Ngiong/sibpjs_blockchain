@@ -61,4 +61,13 @@ contract Document {
   function getDocumentByType(string memory _type) public view returns (uint256[] memory) {
     return documentIdsOfType[_type];
   }
+
+  function updateDocument(uint256 _id, string memory _data) public{
+    require(msg.sender == documentOwner[_id], "unauthorized");
+    document[_id] = _data;
+  }
+
+  function showSender() public view returns (address) {
+    return (msg.sender);
+  }
 }

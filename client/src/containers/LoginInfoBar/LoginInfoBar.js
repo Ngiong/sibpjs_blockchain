@@ -4,6 +4,8 @@ import './styles.css'
 
 import menuIcon from './assets/menu-icon.png'
 import profileImg from './assets/profile-image.png'
+import homeIcon from './assets/home-icon.png'
+import profileIcon from './assets/account-icon.png'
 
 class LoginInfoBar extends React.Component {
   state = {
@@ -19,6 +21,7 @@ class LoginInfoBar extends React.Component {
   render() {
     const { drizzleState } = this.props
     const accountData = this.readAccountData()
+    const accountProperties = JSON.parse(accountData && accountData.data || '{}') || {}
     const accountAddress = drizzleState.accounts[0]
 
     let navbar = <div className='login-info-bar-navbar'>
@@ -28,13 +31,15 @@ class LoginInfoBar extends React.Component {
 
     let profile = this.state.sidebarOpened ? <div className='login-info-bar-profile'>
       <img src={profileImg} className='login-info-bar-profile-image' />
-      <div className='login-info-bar-profile-accountName'>{accountData.accountName || 'User-100001'}</div>
+      <div className='login-info-bar-profile-accountName'>{accountProperties.accountName}</div>
       <div className='login-info-bar-profile-accountAddress'>Address: {accountAddress}</div>
     </div> : null
 
     let navigation = this.state.sidebarOpened ? <div className='login-info-bar-navigation'>
-      <Link to="/account"><div onClick={this.toggleSidebarOpen}>Ubah Profil</div></Link>
-      <p>(cuma buat debug) AccountData yg tersimpan: {JSON.stringify(accountData)}</p>
+      <Link to='/'><div onClick={this.toggleSidebarOpen} className='login-info-bar-navigation-item'>
+        <img src={homeIcon} className='login-info-bar-navigation-item-icon' /> Home</div></Link>
+      <Link to='/account'><div onClick={this.toggleSidebarOpen} className='login-info-bar-navigation-item'>
+        <img src={profileIcon} className='login-info-bar-navigation-item-icon' /> Profil</div></Link>
     </div> : null
 
     let sidebar = this.state.sidebarOpened ? <div>
