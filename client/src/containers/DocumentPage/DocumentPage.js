@@ -40,6 +40,9 @@ class DocumentPage extends ReactDrizzleComponent {
     const _getOwnedDocumentListDataKey = this.retrieveOwnedDocumentList()
     this._drizzleStateIfExist(_getOwnedDocumentListDataKey, 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
     this.setState({ _getOwnedDocumentListDataKey })
+
+    const _accountPrivateKey = localStorage.getItem('accountPrivateKey')
+    if (_accountPrivateKey) this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, _accountPrivateKey)
   }
 
   render = () => {
@@ -73,7 +76,7 @@ class DocumentPage extends ReactDrizzleComponent {
     </div>
 
     const listSection = this.state.input.accountPrivateKey ? <div>
-      <h1>Your Document List</h1>
+      <h1>{this.props.title}</h1>
       <div>Your Private Key: </div>
       <div><textarea value={input.accountPrivateKey} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_PRIVATE_KEY)} /></div>
       {rOwnedDocumentList}
@@ -92,7 +95,7 @@ class DocumentPage extends ReactDrizzleComponent {
 
   handleInputChange = (field, event) => {
     let newInput = { ...this.state.input }
-    newInput[field] = event.target.value
+    newInput[field] = typeof(event) === 'string' ? event : event.target.value
     this.setState({ input: newInput })
   }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 
 import AccountPage from '../containers/AccountPage'
 import HomePage from '../containers/HomePage'
@@ -12,10 +12,10 @@ const _AccountPage = props => () => <AccountPage {...props} />
 const _DocumentPage = props => () => <DocumentPage {...props} />
 const _RequestPage = props => () => <RequestPage {...props} />
 const _HealthPage = props => () => {
-  return <DocumentPage {...props} mode='LIST' types={['MEDICAL_RECORD']} />
+  return <DocumentPage {...props} mode='LIST' title='Rekam Medis Anda' types={['MEDICAL_RECORD']} />
 }
 const _InsurancePage = props => () => {
-  return <DocumentPage {...props} mode='LIST' types={['INSURANCE_POLICY', 'INSURANCE_CLAIM']} />
+  return <DocumentPage {...props} mode='LIST' title='Dokumen Asuransi Anda' types={['INSURANCE_POLICY', 'INSURANCE_CLAIM']} />
 }
 
 const getRoutes = drizzleProps => {
@@ -27,9 +27,9 @@ const getRoutes = drizzleProps => {
     <Route key='health-page' exact path='/health' render={_HealthPage(drizzleProps)} />,
     <Route key='insurance-page' exact path='/insurance' render={_InsurancePage(drizzleProps)} />,
     <Route key='404' path='/404' component={NotFoundPage} />,
-    <Redirect from='*' to='/404' />,
+    <Redirect to='/404' />,
   ]
-  return routes
+  return <Switch>{routes}</Switch>
 }
 
 export {
