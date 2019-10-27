@@ -7,7 +7,8 @@ contract Document {
   mapping (address => uint256[]) public ownedDocumentList; //address to list of document ids
   mapping (address => uint256[]) public authorizedDocumentList; //address to list of authorized documents
   
-  mapping(uint256 => DocumentData) public ownedDocumentToId;
+  mapping(uint256 => DocumentData) public ownedDocumentOfId;
+  mapping(string => uint256[]) public documentIdsOfType;
 
   struct DocumentData {
     uint256 id;
@@ -49,7 +50,15 @@ contract Document {
     createDocument(_owner, _data);
 
     //assume totalDocument is incremented in createDocument() method
+    uint newId = totalDocument;
     DocumentData memory newDocument = DocumentData(totalDocument, _type, _data, "signature");
-    ownedDocumentToId[totalDocument] = newDocument;
+    ownedDocumentOfId[newId] = newDocument;
+
+    //insert mapping of document type to ids
+    documentIdsOfType[_type].push(newId);
+  }
+
+  function getDocumentByType(string memory _type) public view returns (uint256[] memory) {
+    return documentIdsOfType[_type];
   }
 }
