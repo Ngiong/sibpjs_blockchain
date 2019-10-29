@@ -16,12 +16,14 @@ class NavigationItem extends React.Component {
 
     let itemClass = 'navigation-bar-menu-item'
 
-    return <NavLink to={this.props.link} activeClassName='navigation-bar-menu-item-active'>
-      <div className={itemClass}>
-        <img src={img} className='navigation-bar-menu-item-icon' />
-        <span className='navigation-bar-menu-item-label'>{label}</span>
-      </div>
-    </NavLink>
+    return <div className='navigation-bar-menu-item-wrapper'>
+      <NavLink to={this.props.link} activeClassName='navigation-bar-menu-item-active'>
+        <div className={itemClass}>
+          <img src={img} className='navigation-bar-menu-item-icon' />
+          <span className='navigation-bar-menu-item-label'>{label}</span>
+        </div>
+      </NavLink>
+    </div>
   }
 
   handleOnClick = () => {

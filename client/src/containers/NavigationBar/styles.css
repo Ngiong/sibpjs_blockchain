@@ -19,13 +19,16 @@
   }
 }
 
+.navigation-bar-menu-item-wrapper {
+  flex: 1;
+}
+
 .navigation-bar-menu-item {
   display: flex; flex-direction: column;
   justify-content: center; align-items: center;
   text-align: center;
   padding-top: 1em;
   cursor: pointer;
-  width: 70px;
 }
 
 .navigation-bar-menu-item-active > .navigation-bar-menu-item  {
