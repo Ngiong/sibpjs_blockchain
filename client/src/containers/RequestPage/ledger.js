@@ -15,9 +15,15 @@ class AccessRequestLedger {
     return transactionStackId
   }
 
-  getAccessRequestList = address => {
+  getAccessRequestByGranterList = address => {
     const contract = drizzle.contracts.AccessRequest
-    const _getAccessRequestList = contract.methods['getAccessRequestList'].cacheCall(address)
+    const _getAccessRequestList = contract.methods['getAccessRequestByGranterList'].cacheCall(address)
+    return _getAccessRequestList
+  }
+
+  getAccessRequestByRequesterList = (address, take) => {
+    const contract = drizzle.contracts.AccessRequest
+    const _getAccessRequestList = contract.methods['getAccessRequestByRequesterList'].cacheCall(address, take)
     return _getAccessRequestList
   }
 

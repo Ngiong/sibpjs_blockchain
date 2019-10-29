@@ -1,4 +1,5 @@
 pragma solidity ^0.5.0;
+import './AccessRequest.sol';
 
 contract Document {
   uint256 public totalDocument;
@@ -41,13 +42,22 @@ contract Document {
   }
 
   function authorizeDocument(
+    uint256 _accessRequestId,
     address _requester,
     address _owner,
     string memory _documentDataList) public {
 
-    totalAuthorizedDocument++;
-    authorizedDocumentData[totalAuthorizedDocument] = AuthorizedDocumentData(totalAuthorizedDocument, _owner, _documentDataList);
-    authorizedDocumentList[_requester].push(totalAuthorizedDocument);
+    AccessRequest ar = new AccessRequest();
+    bytes memory _documentBytes = bytes(_documentDataList);
+    if (_documentBytes.length > 0) {
+        totalAuthorizedDocument++;
+        authorizedDocumentData[totalAuthorizedDocument] = AuthorizedDocumentData(totalAuthorizedDocument, _owner, _documentDataList);
+        authorizedDocumentList[_requester].push(totalAuthorizedDocument);
+        ar.completeAccessRequest(_accessRequestId, "COMPLETED", totalAuthorizedDocument);
+
+    } else {
+        ar.completeAccessRequest(_accessRequestId, "DECLINED", 0);
+    }
   }
 
   function getOwnedDocumentList(address _account) public view returns (uint256[] memory) {

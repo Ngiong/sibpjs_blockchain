@@ -27,7 +27,7 @@ const getRoutes = drizzleProps => {
     <Route key='health-page' exact path='/health' render={_HealthPage(drizzleProps)} />,
     <Route key='insurance-page' exact path='/insurance' render={_InsurancePage(drizzleProps)} />,
     <Route key='404' path='/404' component={NotFoundPage} />,
-    <Redirect to='/404' />,
+    <Redirect key='_redirect' to='/404' />,
   ]
   return <Switch>{routes}</Switch>
 }
