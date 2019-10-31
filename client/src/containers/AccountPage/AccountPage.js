@@ -73,7 +73,10 @@ class AccountPage extends ReactDrizzleComponent {
   componentDidMount = () => { this.retrieveAccountData() }
 
   componentDidUpdate = prevProps => {
-    this._drizzleStateDidUpdate(prevProps, '_getAccountDataKey', 'Account', 'account', this.restoreAccountData)
+    this._drizzleStateDidUpdate(prevProps, '_getAccountDataKey', 'Account', 'account', accountData => {
+      const accountAddress = this.props.drizzleState.accounts[0]
+      this.restoreAccountData(accountData, accountAddress)
+    })
     this._drizzleStateTxSuccess(prevProps, this.state._transactionStackId, this.handleCompletedForm)
   }
 
@@ -186,7 +189,7 @@ class AccountPage extends ReactDrizzleComponent {
     const contract = this.props.drizzle.contracts.Account
     const accountAddress = this.props.drizzleState.accounts[0]
     const _getAccountDataKey = contract.methods['account'].cacheCall(accountAddress)
-    this._drizzleStateIfExist(_getAccountDataKey, 'Account', 'account', this.restoreAccountData)
+    this._drizzleStateIfExist(_getAccountDataKey, 'Account', 'account', accountData => this.restoreAccountData(accountData, accountAddress))
     this.setState({ _getAccountDataKey })
   }
 
@@ -196,10 +199,10 @@ class AccountPage extends ReactDrizzleComponent {
     return accountData && accountData.value
   }
 
-  restoreAccountData = accountData => {
+  restoreAccountData = (accountData, accountAddress) => {
     if (accountData && accountData.accountPublicKey && !this.state.input.accountPublicKey) {
       const accountProperties = JSON.parse(accountData.data)
-      const accountPrivateKey = localStorage.getItem('accountPrivateKey') || ''
+      const accountPrivateKey = localStorage.getItem('accountPrivateKey#' + accountAddress) || ''
       const input = {
         accountType: accountData.accountType || 'REGULAR',
         accountName: accountData.accountName || accountProperties.accountName || '',
@@ -231,7 +234,9 @@ class AccountPage extends ReactDrizzleComponent {
   handleStorePrivateKey = privateKey => {
     if (!privateKey) return
     this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, privateKey)
-    localStorage.setItem('accountPrivateKey', privateKey)
+
+    const accountAddress = this.props.drizzleState.accounts[0]
+    localStorage.setItem('accountPrivateKey#' + accountAddress, privateKey)
   }
 
   completedForm = () => {

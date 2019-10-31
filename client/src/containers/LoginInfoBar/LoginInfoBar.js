@@ -30,7 +30,7 @@ class LoginInfoBar extends React.Component {
 
     let profile = this.state.sidebarOpened ? <div className='login-info-bar-profile'>
       <img src={profileImg} className='login-info-bar-profile-image' />
-      <div className='login-info-bar-profile-accountName'>{accountData.accountName}</div>
+      <div className='login-info-bar-profile-accountName'>{accountData && accountData.accountName}</div>
       <div className='login-info-bar-profile-accountAddress'>Address: {accountAddress}</div>
     </div> : null
 

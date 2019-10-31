@@ -62,7 +62,8 @@ class RequestPage extends ReactDrizzleComponent {
     this._drizzleStateIfExist(_getOwnedDocumentListDataKey, 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
     this.setState({ _getOwnedDocumentListDataKey })
 
-    const _accountPrivateKey = localStorage.getItem('accountPrivateKey')
+    const accountAddress = this.props.drizzleState.accounts[0]
+    const _accountPrivateKey = localStorage.getItem('accountPrivateKey#' + accountAddress)
     if (_accountPrivateKey) this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, _accountPrivateKey)
   }
 
