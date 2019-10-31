@@ -258,22 +258,26 @@ class RequestPage extends ReactDrizzleComponent {
 
   // Permintaan Akses Anda
   renderAccessRequestsByGranter = (accessRequestList, onSelect) => {
-    return <div className='request-page-list'>
-    { Object.keys(accessRequestList).map(requestId => {
-        const data = accessRequestList[requestId]
-        if (!data) return null
+    const content = Object.keys(accessRequestList).map(requestId => {
+      const data = accessRequestList[requestId]
+      if (!data) return null
 
-        let className = 'request-page-list-item request-page-list-item-with-photo'
+      let className = 'request-page-list-item request-page-list-item-with-photo'
 
-        return <div key={'access-request-id-' + requestId} className={className}>
-          <img src={accountIcon} style={{ height: 50 }} />
-          <div style={{ maxWidth: 340 }}>
-            <div>ID Request: #{data.id}</div>
-            <div className='request-page-list-item-name'>{data.requester}</div>
-            <div>{Button('Pilih', () => onSelect(data), 'primary', 'small', false, 'text')}</div>
-          </div>
+      return <div key={'access-request-id-' + requestId} className={className}>
+        <img src={accountIcon} style={{ height: 50 }} />
+        <div style={{ maxWidth: 340 }}>
+          <div>ID Request: #{data.id}</div>
+          <div className='request-page-list-item-name'>{data.requester}</div>
+          <div>{Button('Pilih', () => onSelect(data), 'primary', 'small', false, 'text')}</div>
         </div>
-      }) }
+      </div>
+    })
+
+    const emptyList = content.filter(s => s).length === 0
+
+    return <div className='request-page-list'>
+      { emptyList ? <span style={{ fontSize: '1.2em' }}>Belum ada pihak yang meminta akses terhadap dokumen Anda.</span> : content }
     </div>
   }
 
