@@ -51,12 +51,12 @@ class NavigationBar extends React.Component {
     const regularNavigation = [
       <NavigationItem key='health' type='HEALTH' link='/health' />,
       <NavigationItem key='insurance' type='INSURANCE' link='/insurance' />,
-      <NavigationItem key='access' type='ACCESS' link='/access' />,
+      <NavigationItem key='access' type='ACCESS' link='/grant' />,
     ]
 
     const nonRegularNavigation = [
       <NavigationItem key='document' type='CREATE_DOCUMENT' link='/document/create' />,
-      <NavigationItem key='access' type='ACCESS' link='/access' />,
+      <NavigationItem key='access' type='ACCESS' link='/request' />,
     ]
 
     return <div className='navigation-bar-menu'>

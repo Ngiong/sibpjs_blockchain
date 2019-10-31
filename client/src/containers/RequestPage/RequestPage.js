@@ -108,12 +108,19 @@ class RequestPage extends ReactDrizzleComponent {
       <div>{Button('Kirim', this.handleGrantButtonOnClick, 'secondary', 'small', this.shouldDisableGrantButton())}</div>
     </div>
 
-    return <div>
-      {createRequestSection}
-      {sentRequestListSection}
-      {receivedRequestListSection}
-      {documentSelectionSection}
-    </div>
+    if (this.props.mode === 'GRANT')
+      return <div>
+        {receivedRequestListSection}
+        {documentSelectionSection}
+      </div>
+
+    if (this.props.mode === 'REQUEST')
+      return <div>
+        {createRequestSection}
+        {sentRequestListSection}
+      </div>
+    
+    return null
   }
 
   handleInputChange = (field, event) => {
