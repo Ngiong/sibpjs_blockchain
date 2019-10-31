@@ -83,8 +83,8 @@ class RequestPage extends ReactDrizzleComponent {
     const accessRequestsByRequester = this.readAccessRequestsByRequester()
     const rAccessRequestsByRequester = this.renderAccessRequestsByRequester(accessRequestsByRequester)
 
-    const sentRequestListSection = <div style={{ marginTop: '3em' }}>
-      <h3>Beberapa pengajuan akses yang pernah Anda buat:</h3>
+    const sentRequestListSection = <div style={{ marginTop: '5em' }}>
+      <h2>Pengajuan akses sebelumnya:</h2>
       {rAccessRequestsByRequester}
     </div>
 
@@ -226,26 +226,30 @@ class RequestPage extends ReactDrizzleComponent {
 
   // Pengajuan Akses yang pernah Anda buat:
   renderAccessRequestsByRequester = accessRequestList => {
-    return <div className='request-page-list'>
-    { Object.keys(accessRequestList).map(requestId => {
-        const data = accessRequestList[requestId]
-        if (!data) return null
+    const content = Object.keys(accessRequestList).map(requestId => {
+      const data = accessRequestList[requestId]
+      if (!data) return null
 
-        let className = 'request-page-list-item request-page-list-item-with-photo'
-        if (data.status === 'DECLINED') className += ' request-page-list-danger'
-        if (data.status === 'COMPLETED') className += ' request-page-list-success'
+      let className = 'request-page-list-item request-page-list-item-with-photo'
+      if (data.status === 'DECLINED') className += ' request-page-list-danger'
+      if (data.status === 'COMPLETED') className += ' request-page-list-success'
 
-        const icon = data.status === 'DECLINED' ? accountIconWhite : accountIcon
+      const icon = data.status === 'DECLINED' ? accountIconWhite : accountIcon
 
-        return <div key={'access-request-id-' + requestId} className={className}>
-          <img src={icon} style={{ height: 50 }} />
-          <div style={{ maxWidth: 340 }}>
-            <div>ID Request: #{data.id}</div>
-            <div style={{ fontSize: '1.2em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.granter}</div>
-            <div>Status Permohonan: <span style={{ fontSize: '1.1em', fontWeight: '600' }}>{data.status}</span></div>
-          </div>
+      return <div key={'access-request-id-' + requestId} className={className}>
+        <img src={icon} style={{ height: 50 }} />
+        <div style={{ maxWidth: 340 }}>
+          <div>ID Request: #{data.id}</div>
+          <div style={{ fontSize: '1.2em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.granter}</div>
+          <div>Status Permohonan: <span style={{ fontSize: '1.1em', fontWeight: '600' }}>{data.status}</span></div>
         </div>
-      }) }
+      </div>
+    })
+    
+    const emptyList = content.filter(s => s).length === 0
+
+    return <div className='request-page-list'>
+      { emptyList ? 'Anda belum pernah membuat pengajuan akses kepada siapapun.' : content }
     </div>
   }
 
