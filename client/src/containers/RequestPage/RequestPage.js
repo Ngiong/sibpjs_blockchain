@@ -37,6 +37,7 @@ class RequestPage extends ReactDrizzleComponent {
     _getOwnedDocumentListDataKey: null,
     _getDocumentDataKey: {},
     _getRequesterAccountDataKey: null,
+    _getAuthorizedDocumentDataKey: {},
 
     _transactionStackId: null,
   }
@@ -242,6 +243,8 @@ class RequestPage extends ReactDrizzleComponent {
           <div>ID Request: #{data.id}</div>
           <div style={{ fontSize: '1.2em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.granter}</div>
           <div>Status Permohonan: <span style={{ fontSize: '1.1em', fontWeight: '600' }}>{data.status}</span></div>
+          { data.status ==='COMPLETED' && 
+          <div>Granted ID: <span style={{ fontSize: '1.1em', fontWeight: '600' }}>#{data.authorizedDocumentId}</span></div> }
         </div>
       </div>
     })

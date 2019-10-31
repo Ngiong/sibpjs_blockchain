@@ -26,7 +26,7 @@ class AccountLedger {
       storedFieldForData = ['accountBPJS', 'accountBirthdate', 'accountGender']
     else
       storedFieldForData = ['accountLicenseNumber', 'accountLicenseValidity',
-      'accountPICName', 'accountPICNPWP', 'accountPICRole', 'accounPICPhoneNumber']
+      'accountPICName', 'accountPICNPWP', 'accountPICRole', 'accountPICPhoneNumber']
 
     const data = storedFieldForData
       .reduce((dict, item) => { dict[item] = input[item]; return dict }, {})

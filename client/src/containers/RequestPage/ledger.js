@@ -59,6 +59,12 @@ class AccessRequestLedger {
       requestStatus, requesterAddress, granterAccountAddress, cipher)
     return txStackId
   }
+
+  getAuthorizedDocumentById = authorizedDocumentId => {
+    const contract = drizzle.contract.Document
+    const _getAuthorizedDocumentByIdDataKey = contract.methods['authorizedDocumentData'].cacheCall(authorizedDocumentId)
+    return _getAuthorizedDocumentByIdDataKey
+  }
 }
 
 export default AccessRequestLedger

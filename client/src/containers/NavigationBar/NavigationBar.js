@@ -6,16 +6,19 @@ import healthIcon from './assets/health.png'
 import insuranceIcon from './assets/insurance.png'
 import accessIcon from './assets/access.png'
 import documentIcon from './assets/document.png'
+import grantedIcon from './assets/granted.png'
 
 class NavigationItem extends React.Component {
   render = () => {
     const img = this.props.type === 'HEALTH' ? healthIcon
       : this.props.type === 'INSURANCE' ? insuranceIcon
-      : this.props.type === 'CREATE_DOCUMENT' ? documentIcon : accessIcon
+      : this.props.type === 'CREATE_DOCUMENT' ? documentIcon 
+      : this.props.type === 'GRANTED' ? grantedIcon : accessIcon
 
     const label = this.props.type === 'HEALTH' ? 'Rekam Medis'
     : this.props.type === 'INSURANCE' ? 'Asuransi'
-    : this.props.type === 'CREATE_DOCUMENT' ? 'Dokumen' : 'Akses'
+    : this.props.type === 'CREATE_DOCUMENT' ? 'Dokumen'
+    : this.props.type === 'GRANTED' ? 'Granted' : 'Akses'
 
     let itemClass = 'navigation-bar-menu-item'
 
@@ -56,6 +59,7 @@ class NavigationBar extends React.Component {
 
     const nonRegularNavigation = [
       <NavigationItem key='document' type='CREATE_DOCUMENT' link='/document/create' />,
+      <NavigationItem key='granted' type='GRANTED' link='/granted' />,
       <NavigationItem key='access' type='ACCESS' link='/request' />,
     ]
 

@@ -40,6 +40,7 @@ const getRoutes = drizzleProps => {
 
     <Route key='request-page' exact path='/request' render={_RequestPage(drizzleProps)} />,
     <Route key='grant-request-page' exact path='/grant' render={_GrantAccessPage(drizzleProps)} />,
+    <Route key='granted-page' exact path='/granted' render={NotImplemented} />,
 
     <Route key='404' path='/404' component={NotFoundPage} />,
     <Redirect key='_redirect' to='/404' />,
