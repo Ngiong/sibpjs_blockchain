@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import AccessRequestLedger from './ledger'
+import { encryptRSA, decryptRSA } from './rsa'
 
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
@@ -16,25 +17,36 @@ import accountIconWhite from './assets/account-icon-white.png'
 
 const FIELD = {
   REQUEST_TO: 'requestTo',
-  VIEW_REQUEST_ID: 'viewRequestId',
+  ACCOUNT_PRIVATE_KEY: 'accountPrivateKey',
+  CHOSEN_REQUEST_ENTRY: 'chosenRequestEntry',
 }
 
 class RequestPage extends ReactDrizzleComponent {
   state = {
     input: {
       requestTo: '',
-      viewRequestId: 0,
+      accountPrivateKey: '',
+      chosenRequestEntry: {},
+      chosenDocuments: [],
     },
     _getAccessRequestByGranterListDataKey: null,
     _getAccessRequestByGranterDataKey: {},
     _getAccessRequestByRequesterListDataKey: null,
     _getAccessRequestByRequesterDataKey: {},
+
+    _getOwnedDocumentListDataKey: null,
+    _getDocumentDataKey: {},
+    _getRequesterAccountDataKey: null,
+
     _transactionStackId: null,
   }
+  decipheredDocument = {}
 
   componentDidUpdate = prevProps => {
     this._drizzleStateDidUpdate(prevProps, '_getAccessRequestByGranterListDataKey', 'AccessRequest', 'getAccessRequestByGranterList', this.retrieveAccessRequestsByGranter)
     this._drizzleStateDidUpdate(prevProps, '_getAccessRequestByRequesterListDataKey', 'AccessRequest', 'getAccessRequestByRequesterList', this.retrieveAccessRequestsByRequester)
+    this._drizzleStateDidUpdate(prevProps, '_getOwnedDocumentListDataKey', 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
+    this._drizzleStateDidUpdate(prevProps, '_getRequesterAccountDataKey', 'Account', 'account', this.proceedGrantDocument)
   }
 
   componentDidMount = () => {
@@ -45,6 +57,13 @@ class RequestPage extends ReactDrizzleComponent {
     const _getAccessRequestByRequesterListDataKey = this.retrieveAccessRequestByRequesterList()
     this._drizzleStateIfExist(_getAccessRequestByRequesterListDataKey, 'AccessRequest', 'getAccessRequestByRequesterList', this.retrieveAccessRequestsByRequester)
     this.setState({ _getAccessRequestByRequesterListDataKey })
+
+    const _getOwnedDocumentListDataKey = this.retrieveOwnedDocumentList()
+    this._drizzleStateIfExist(_getOwnedDocumentListDataKey, 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
+    this.setState({ _getOwnedDocumentListDataKey })
+
+    const _accountPrivateKey = localStorage.getItem('accountPrivateKey')
+    if (_accountPrivateKey) this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, _accountPrivateKey)
   }
 
   render = () => {
@@ -78,9 +97,15 @@ class RequestPage extends ReactDrizzleComponent {
       {rAccessRequestsByGranter}
     </div>
 
+    const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
+    const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+
     const documentSelectionSection = <div>
-      <h1>Document Selection Section</h1>
-      <div>Selecting requestId: {this.state.input.viewRequestId}</div>
+      <h1>Pemberian Akses</h1>
+      <h3>Kepada: {this.state.input.chosenRequestEntry.granter}</h3>
+      <div>Selecting requestId: {this.state.input.chosenRequestEntry.id}</div>
+      { rOwnedDocumentList }
+      <div>{Button('Kirim', this.handleGrantButtonOnClick, 'secondary', 'small', this.shouldDisableGrantButton())}</div>
     </div>
 
     return <div>
@@ -97,9 +122,9 @@ class RequestPage extends ReactDrizzleComponent {
     this.setState({ input: newInput })
   }
 
-  handleSelectAccessRequest = requestId => {
+  handleSelectAccessRequest = requestData => {
     let newInput = { ...this.state.input }
-    newInput.viewRequestId = requestId
+    newInput.chosenRequestEntry = requestData
     this.setState({ input: newInput })
   }
 
@@ -157,7 +182,7 @@ class RequestPage extends ReactDrizzleComponent {
     const { _getAccessRequestByGranterDataKey } = this.state
 
     let accessRequestResult = {}
-    Object.keys(_getAccessRequestByGranterDataKey).forEach(requestId => {
+    Object.keys(_getAccessRequestByGranterDataKey).filter(requestId => requestId > 0).forEach(requestId => {
       const result = this.props.drizzleState.contracts.AccessRequest.accessRequest[_getAccessRequestByGranterDataKey[requestId]]
       const data = result && result.value
       accessRequestResult[requestId] = data
@@ -230,11 +255,95 @@ class RequestPage extends ReactDrizzleComponent {
           <div style={{ maxWidth: 340 }}>
             <div>ID Request: #{data.id}</div>
             <div className='request-page-list-item-name'>{data.requester}</div>
-            <div>{Button('Pilih', () => onSelect(requestId), 'primary', 'small', false, 'text')}</div>
+            <div>{Button('Pilih', () => onSelect(data), 'primary', 'small', false, 'text')}</div>
           </div>
         </div>
       }) }
     </div>
+  }
+
+  retrieveOwnedDocumentList = () => {
+    const { drizzle, drizzleState } = this.props
+    const accountAddress = drizzleState.accounts[0]
+    const ledger = new AccessRequestLedger(drizzle, drizzleState)
+    return ledger.getOwnedDocumentList(accountAddress)
+  }
+
+  retrieveDocuments = documentIds => {
+    const { drizzle, drizzleState } = this.props
+    const ledger = new AccessRequestLedger(drizzle, drizzleState)
+
+    let _getDocumentDataKey = {}
+    documentIds.forEach(documentId => {
+      const _dataKey = ledger.getDocumentById(documentId)
+      _getDocumentDataKey[documentId] = _dataKey
+    })
+    this.setState({ _getDocumentDataKey })
+  }
+
+  readDocument = privateKey => {
+    const { _getDocumentDataKey } = this.state
+
+    let decryptionResult = {}
+    Object.keys(_getDocumentDataKey).forEach(documentId => {
+      const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
+      const cipher = result && result.value.data
+      const data = decryptRSA(privateKey, cipher)
+      decryptionResult[documentId] = data
+      this.decipheredDocument[documentId] = data
+    })
+    return decryptionResult
+  }
+
+  renderOwnedDocumentList = documentList => {
+    return <div> 
+    { Object.keys(documentList).map((s, idx) => {
+      try {
+        const data = JSON.parse(documentList[s])
+        return <div key={idx} style={{ background: 'pink', margin: '5px 0' }}>
+          <div>DocumentId: {s}</div>
+          <div>DocumentType: {data.documentType}</div>
+          {Checkbox(this.isDocumentChosen(s), 'Chosen', () => this.handleCheckboxClick(s))}
+        </div>
+      } catch (err) {
+        return null
+      }
+    })}
+    </div>
+  }
+
+  isDocumentChosen = documentId => !!this.state.input.chosenDocuments.find(s => s === documentId)
+  handleCheckboxClick = documentId => {
+    const newInput = { ...this.state.input }
+    
+    if (this.isDocumentChosen(documentId))
+      newInput.chosenDocuments = newInput.chosenDocuments.filter(s => s !== documentId)
+    else
+      newInput.chosenDocuments = [...newInput.chosenDocuments, documentId]
+    
+    this.setState({ input: newInput })
+  }
+
+  shouldDisableGrantButton = () => !this.state.input.chosenRequestEntry.requester
+
+  handleGrantButtonOnClick = () => {
+    const { drizzle, drizzleState } = this.props
+    const ledger = new AccessRequestLedger(drizzle, drizzleState)
+    const _getRequesterAccountDataKey = ledger.getAccountInfo(this.state.input.chosenRequestEntry.requester)
+    this._drizzleStateIfExist(_getRequesterAccountDataKey, 'Account', 'account', this.proceedGrantDocument)
+    this.setState({ _getRequesterAccountDataKey })
+  }
+
+  proceedGrantDocument = requesterAccountData => {
+    const { input } = this.state
+    const documentList = input.chosenDocuments.map(documentId => { JSON.parse(this.decipheredDocument[documentId]) })
+    const cipher = encryptRSA(requesterAccountData.accountPublicKey, JSON.stringify(documentList))
+    
+    const { drizzle, drizzleState } = this.props
+    const ledger = new AccessRequestLedger(drizzle, drizzleState)
+    const _transactionStackId = ledger.authorizeDocument(input.chosenRequestEntry.id, input.chosenRequestEntry.requester, cipher,
+      documentList.length === 0 ? 'DECLINED' : 'COMPLETED')
+    this.setState({ _transactionStackId })
   }
 }
 

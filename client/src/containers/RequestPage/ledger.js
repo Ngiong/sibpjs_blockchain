@@ -32,6 +32,33 @@ class AccessRequestLedger {
     const _getAccessRequestDataKey = contract.methods['accessRequest'].cacheCall(requestId)
     return _getAccessRequestDataKey
   }
+
+  getOwnedDocumentList = address => {
+    const contract = drizzle.contracts.Document
+    const _getOwnedDocumentListDataKey = contract.methods['getOwnedDocumentList'].cacheCall(address)
+    return _getOwnedDocumentListDataKey
+  }
+
+  getDocumentById = documentId => {
+    const contract = drizzle.contracts.Document
+    const _getDocumentByIdDataKey = contract.methods['ownedDocumentData'].cacheCall(documentId)
+    return _getDocumentByIdDataKey
+  }
+
+  getAccountInfo = address => {
+    const contract = drizzle.contracts.Account
+    const _getAccountDataKey = contract.methods['account'].cacheCall(address)
+    return _getAccountDataKey
+  }
+
+  authorizeDocument = (requestId, requesterAddress, cipher, requestStatus) => {
+    const contract = drizzle.contracts.Document
+    const arContract = drizzle.contracts.AccessRequest.address
+    const granterAccountAddress = drizzleState.accounts[0]
+    const txStackId = contract.methods['authorizeDocument'].cacheSend(arContract, requestId, 
+      requestStatus, requesterAddress, granterAccountAddress, cipher)
+    return txStackId
+  }
 }
 
 export default AccessRequestLedger

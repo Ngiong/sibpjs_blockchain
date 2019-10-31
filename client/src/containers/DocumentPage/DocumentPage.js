@@ -154,8 +154,8 @@ class DocumentPage extends ReactDrizzleComponent {
 
     let decryptionResult = {}
     Object.keys(_getDocumentDataKey).forEach(documentId => {
-      const result = this.props.drizzleState.contracts.Document.document[_getDocumentDataKey[documentId]]
-      const cipher = result && result.value
+      const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
+      const cipher = result && result.value.data
       const data = decryptRSA(privateKey, cipher)
       decryptionResult[documentId] = data
     })

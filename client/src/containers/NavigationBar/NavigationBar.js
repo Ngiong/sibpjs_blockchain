@@ -5,14 +5,17 @@ import './styles.css'
 import healthIcon from './assets/health.png'
 import insuranceIcon from './assets/insurance.png'
 import accessIcon from './assets/access.png'
+import documentIcon from './assets/document.png'
 
 class NavigationItem extends React.Component {
   render = () => {
     const img = this.props.type === 'HEALTH' ? healthIcon
-      : this.props.type === 'INSURANCE' ? insuranceIcon : accessIcon
+      : this.props.type === 'INSURANCE' ? insuranceIcon
+      : this.props.type === 'CREATE_DOCUMENT' ? documentIcon : accessIcon
 
     const label = this.props.type === 'HEALTH' ? 'Rekam Medis'
-    : this.props.type === 'INSURANCE' ? 'Asuransi' : 'Akses'
+    : this.props.type === 'INSURANCE' ? 'Asuransi'
+    : this.props.type === 'CREATE_DOCUMENT' ? 'Dokumen' : 'Akses'
 
     let itemClass = 'navigation-bar-menu-item'
 
@@ -32,12 +35,33 @@ class NavigationItem extends React.Component {
 }
 
 class NavigationBar extends React.Component {
+  state = {
+    _getAccountDataKey: null,
+  }
+
+  componentDidMount = () => {
+    const _getAccountDataKey = this.retrieveAccountData()
+    this.setState({ _getAccountDataKey })
+  }
 
   render = () => {
+    const { drizzleState } = this.props
+    const accountData = this.readAccountData()
+
+    const regularNavigation = [
+      <NavigationItem key='health' type='HEALTH' link='/health' />,
+      <NavigationItem key='insurance' type='INSURANCE' link='/insurance' />,
+      <NavigationItem key='access' type='ACCESS' link='/access' />,
+    ]
+
+    const nonRegularNavigation = [
+      <NavigationItem key='document' type='CREATE_DOCUMENT' link='/document/create' />,
+      <NavigationItem key='access' type='ACCESS' link='/access' />,
+    ]
+
     return <div className='navigation-bar-menu'>
-      <NavigationItem type='HEALTH' link='/health' />
-      <NavigationItem type='INSURANCE' link='/insurance' />
-      <NavigationItem type='ACCESS' link='/access' />
+      { accountData && accountData.accountType === 'REGULAR' && regularNavigation }
+      { accountData && ['HEALTH_PROVIDER', 'INSURANCE_COMPANY'].indexOf(accountData.accountType) !== -1 && nonRegularNavigation }
     </div>
     // return <div style={{ textAlign: 'center' }}>
     //   <h1>Menu</h1>
@@ -47,6 +71,18 @@ class NavigationBar extends React.Component {
     //     <li><Link to="/request">Request Page</Link></li>
     //   </ul>
     // </div>
+  }
+
+  retrieveAccountData = () => {
+    const { drizzle, drizzleState } = this.props
+    const accountAddress = drizzleState.accounts[0]
+    return drizzle.contracts.Account.methods['account'].cacheCall(accountAddress)
+  }
+
+  readAccountData = () => {
+    let { _getAccountDataKey } = this.state
+    const accountData = this.props.drizzleState.contracts.Account.account[_getAccountDataKey]
+    return accountData && accountData.value
   }
 }
 

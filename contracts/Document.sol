@@ -42,22 +42,19 @@ contract Document {
   }
 
   function authorizeDocument(
+    address _accessRequestContractAddress,
     uint256 _accessRequestId,
+    string memory _accessRequestStatus,
     address _requester,
     address _owner,
     string memory _documentDataList) public {
+    
+    totalAuthorizedDocument++;
+    authorizedDocumentData[totalAuthorizedDocument] = AuthorizedDocumentData(totalAuthorizedDocument, _owner, _documentDataList);
+    authorizedDocumentList[_requester].push(totalAuthorizedDocument);
 
-    AccessRequest ar = new AccessRequest();
-    bytes memory _documentBytes = bytes(_documentDataList);
-    if (_documentBytes.length > 0) {
-        totalAuthorizedDocument++;
-        authorizedDocumentData[totalAuthorizedDocument] = AuthorizedDocumentData(totalAuthorizedDocument, _owner, _documentDataList);
-        authorizedDocumentList[_requester].push(totalAuthorizedDocument);
-        ar.completeAccessRequest(_accessRequestId, "COMPLETED", totalAuthorizedDocument);
-
-    } else {
-        ar.completeAccessRequest(_accessRequestId, "DECLINED", 0);
-    }
+    AccessRequest ar = AccessRequest(_accessRequestContractAddress);
+    ar.completeAccessRequest(_accessRequestId, _accessRequestStatus, totalAuthorizedDocument);
   }
 
   function getOwnedDocumentList(address _account) public view returns (uint256[] memory) {

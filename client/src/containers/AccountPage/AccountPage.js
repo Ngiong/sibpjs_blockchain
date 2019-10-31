@@ -101,10 +101,10 @@ class AccountPage extends ReactDrizzleComponent {
       {DateField('Masa Berlaku Izin', input.accountLicenseValidity, this.handleInputChange.bind(this, FIELD.ACCOUNT_LICENSE_VALIDITY))}
       
       <div className='account-page-section-title'>Penanggung Jawab</div>
-      {TextField('Nama PIC', input.accountLicenseNumber, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NAME))}
-      {TextField('NPWP PIC', input.accountLicenseValidity, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NPWP))}
-      {TextField('Jabatan', input.accountLicenseNumber, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_ROLE))}
-      {TextField('Kontak PIC', input.accountLicenseValidity, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_PHONE_NUMBER))}
+      {TextField('Nama PIC', input.accountPICName, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NAME))}
+      {TextField('NPWP PIC', input.accountPICNPWP, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NPWP))}
+      {TextField('Jabatan', input.accountPICRole, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_ROLE))}
+      {TextField('Kontak PIC', input.accountPICPhoneNumber, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_PHONE_NUMBER))}
     </div> : null
 
     const insuranceCompanySection = input.accountType === 'INSURANCE_COMPANY' ? <div>
@@ -118,10 +118,10 @@ class AccountPage extends ReactDrizzleComponent {
       {DateField('Masa Berlaku Izin', input.accountLicenseValidity, this.handleInputChange.bind(this, FIELD.ACCOUNT_LICENSE_VALIDITY))}
       
       <div className='account-page-section-title'>Penanggung Jawab</div>
-      {TextField('Nama PIC', input.accountLicenseNumber, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NAME))}
-      {TextField('NPWP PIC', input.accountLicenseValidity, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NPWP))}
-      {TextField('Jabatan', input.accountLicenseNumber, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_ROLE))}
-      {TextField('Kontak PIC', input.accountLicenseValidity, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_PHONE_NUMBER))}
+      {TextField('Nama PIC', input.accountPICName, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NAME))}
+      {TextField('NPWP PIC', input.accountPICNPWP, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_NPWP))}
+      {TextField('Jabatan', input.accountPICRole, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_ROLE))}
+      {TextField('Kontak PIC', input.accountPICPhoneNumber, this.handleInputChange.bind(this, FIELD.ACCOUNT_PIC_PHONE_NUMBER))}
     </div> : null
 
     const rsaSection = <div>
@@ -248,7 +248,7 @@ class AccountPage extends ReactDrizzleComponent {
       storedFieldForData = ['accountBPJS', 'accountBirthdate', 'accountGender']
     else
       storedFieldForData = ['accountLicenseNumber', 'accountLicenseValidity',
-      'accountPICName', 'accountPICNPWP', 'accountPICRole', 'accounPICPhoneNumber']
+      'accountPICName', 'accountPICNPWP', 'accountPICRole', 'accountPICPhoneNumber']
 
     const validProperties = allFilled(storedFieldForData)
     if (!validProperties) return false

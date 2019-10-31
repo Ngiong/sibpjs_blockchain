@@ -17,13 +17,17 @@ class DocumentLedger {
 
   createDocument = (recipient, input) => {
     const recipientAddress = input.documentRecipient
-    const cipher = encryptRSA(recipient.publicKey, JSON.stringify(input))
-    this.submitDocumentContract(recipientAddress, cipher)
+    const documentData = { ...input }
+    delete documentData.accountPrivateKey
+    const cipher = encryptRSA(recipient.accountPublicKey, JSON.stringify(documentData))
+
+    const issuerAddress = drizzleState.accounts[0]
+    this.submitDocumentContract(recipientAddress, issuerAddress, input.documentType, cipher, '_signature')
   }
 
-  submitDocumentContract = (owner, cipher) => {
+  submitDocumentContract = (owner, issuer, documentType, cipher, signature) => {
     const contract = drizzle.contracts.Document
-    const transactionStackId = contract.methods['createDocument'].cacheSend(owner, cipher)
+    const transactionStackId = contract.methods['createDocument'].cacheSend(owner, issuer, documentType, cipher, signature)
     return transactionStackId
   }
 
@@ -35,7 +39,7 @@ class DocumentLedger {
 
   getDocumentById = documentId => {
     const contract = drizzle.contracts.Document
-    const _getDocumentByIdDataKey = contract.methods['document'].cacheCall(documentId)
+    const _getDocumentByIdDataKey = contract.methods['ownedDocumentData'].cacheCall(documentId)
     return _getDocumentByIdDataKey
   }
 }

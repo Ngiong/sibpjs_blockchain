@@ -17,12 +17,17 @@ const _HealthPage = props => () => {
 const _InsurancePage = props => () => {
   return <DocumentPage {...props} mode='LIST' title='Dokumen Asuransi Anda' types={['INSURANCE_POLICY', 'INSURANCE_CLAIM']} />
 }
+const _CreateDocumentPage = props => () => {
+  return <DocumentPage {...props} mode='CREATE' />
+}
 
 const getRoutes = drizzleProps => {
   const routes = [
     <Route key='home-page' exact path='/' component={HomePage} />,
     <Route key='account-page' exact path='/account' render={_AccountPage(drizzleProps)} />,
-    <Route key='document-page' exact path='/document' render={_DocumentPage(drizzleProps)} />,
+    <Route key='document-page' exact path='/document' render={_DocumentPage(drizzleProps)} />, // DEBUG PURPOSE ONLY
+
+    <Route key='create-document-page' exact path='/document/create' render={_CreateDocumentPage(drizzleProps)} />,
     <Route key='access-request-page' exact path='/access' render={_RequestPage(drizzleProps)} />,
     <Route key='health-page' exact path='/health' render={_HealthPage(drizzleProps)} />,
     <Route key='insurance-page' exact path='/insurance' render={_InsurancePage(drizzleProps)} />,

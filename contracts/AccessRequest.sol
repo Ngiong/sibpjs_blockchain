@@ -29,7 +29,7 @@ contract AccessRequest {
     accessRequest[_id] = _tmp;
 
     uint256[] memory _acList = accessRequestByGranterList[_tmp.granter];
-    for (uint i = 0; i < _acList.length; i++) if (_acList[i] == _id) _acList[i] = -_id;
+    for (uint i = 0; i < _acList.length; i++) if (_acList[i] == _id) _acList[i] = 0;
     accessRequestByGranterList[_tmp.granter] = _acList;
   }
 
