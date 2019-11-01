@@ -94,7 +94,7 @@ class DocumentPage extends ReactDrizzleComponent {
         <Grid item md={6} sm={12} xs={12}>
           <Card title='Document1' date='26/09/1997' description='description'></Card>
         </Grid>
-        <Grid item xs={6} sm={12} xs={12}>
+        <Grid item md={6} sm={12} xs={12}>
           <Card title='Document2' date='26/09/1997' description='description'></Card>
         </Grid>
       </Grid>
