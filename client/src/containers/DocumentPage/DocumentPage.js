@@ -115,23 +115,23 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   handleSubmitButtonClick = () => {
-    // const _getDocumentRecipientDataKey = this.retrieveDocumentRecipient(this.state.input.documentRecipient)
-    // this._drizzleStateIfExist(_getDocumentRecipientDataKey, 'Account', 'account', this.proceedCreateDocument)
-    // this.setState({ _getDocumentRecipientDataKey })
+    const _getDocumentRecipientDataKey = this.retrieveDocumentRecipient(this.state.input.documentRecipient)
+    this._drizzleStateIfExist(_getDocumentRecipientDataKey, 'Account', 'account', this.proceedCreateDocument)
+    this.setState({ _getDocumentRecipientDataKey })
   }
 
-  // retrieveDocumentRecipient = address => {
-  //   const { drizzle, drizzleState } = this.props
-  //   const ledger = new DocumentLedger(drizzle, drizzleState)
-  //   return ledger.getDocumentRecipientAccountInfo(address)
-  // }
+  retrieveDocumentRecipient = address => {
+    const { drizzle, drizzleState } = this.props
+    const ledger = new DocumentLedger(drizzle, drizzleState)
+    return ledger.getDocumentRecipientAccountInfo(address)
+  }
 
-  // proceedCreateDocument = recipientAccountData => {
-  //   const { drizzle, drizzleState } = this.props
-  //   const ledger = new DocumentLedger(drizzle, drizzleState)
-  //   const _transactionStackId = ledger.createDocument(recipientAccountData, this.state.input)
-  //   this.setState({ _transactionStackId })
-  // }
+  proceedCreateDocument = recipientAccountData => {
+    const { drizzle, drizzleState } = this.props
+    const ledger = new DocumentLedger(drizzle, drizzleState)
+    const _transactionStackId = ledger.createDocument(recipientAccountData, this.state.input)
+    this.setState({ _transactionStackId })
+  }
 
   retrieveOwnedDocumentList = () => {
     const { drizzle, drizzleState } = this.props

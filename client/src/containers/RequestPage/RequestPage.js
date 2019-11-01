@@ -355,7 +355,7 @@ class RequestPage extends ReactDrizzleComponent {
 
   proceedGrantDocument = requesterAccountData => {
     const { input } = this.state
-    const documentList = input.chosenDocuments.map(documentId => { JSON.parse(this.decipheredDocument[documentId]) })
+    const documentList = input.chosenDocuments.map(documentId => { return JSON.parse(this.decipheredDocument[documentId]) })
     const cipher = encryptRSA(requesterAccountData.accountPublicKey, JSON.stringify(documentList))
     
     const { drizzle, drizzleState } = this.props
