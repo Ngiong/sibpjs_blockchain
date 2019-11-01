@@ -91,10 +91,10 @@ class DocumentPage extends ReactDrizzleComponent {
     const viewSection = <div>
       {/* <h1>Document #[documentId]</h1> */}
       <Grid container spacing={3}>
-        <Grid item xs={6}>
+        <Grid item md={6} sm={12} xs={12}>
           <Card title='Document1' date='26/09/1997' description='description'></Card>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} sm={12} xs={12}>
           <Card title='Document2' date='26/09/1997' description='description'></Card>
         </Grid>
       </Grid>

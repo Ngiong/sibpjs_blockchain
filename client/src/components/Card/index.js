@@ -9,9 +9,9 @@ import Typography from '@material-ui/core/Typography';
 class SimpleCard extends React.Component{
   render(){ 
     return (
-      <Card onMouseOver={true} 
-      onMouseOut={true} 
-      raised={true} style={{minWidth:275}}>
+      // <Card onMouseOver={true} 
+      // onMouseOut={true} 
+      <Card raised={true}>
         <CardContent>
           <Typography color="textSecondary" gutterBottom>
             {this.props.date}
@@ -24,7 +24,7 @@ class SimpleCard extends React.Component{
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">View</Button>
+          <Button size="small" fullWidth>View</Button>
         </CardActions>
       </Card>
     );
