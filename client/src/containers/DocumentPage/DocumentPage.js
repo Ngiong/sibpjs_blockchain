@@ -1,10 +1,12 @@
 import React from 'react'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import DocumentLedger from './ledger'
+import {Grid} from '@material-ui/core'
 import { decryptRSA } from './rsa'
 import './styles.css'
 
 import notFoundImg from './assets/not-found.png'
+import Card from '../../components/Card'
 
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
@@ -44,6 +46,8 @@ class DocumentPage extends ReactDrizzleComponent {
     const accountAddress = this.props.drizzleState.accounts[0]
     const _accountPrivateKey = localStorage.getItem('accountPrivateKey#' + accountAddress)
     if (_accountPrivateKey) this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, _accountPrivateKey)
+    // const _accountPrivateKey = localStorage.getItem('accountPrivateKey')
+    // if (_accountPrivateKey) this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, _accountPrivateKey)
   }
 
   render = () => {
@@ -66,9 +70,9 @@ class DocumentPage extends ReactDrizzleComponent {
       <div onClick={this.handleSubmitButtonClick}>Submit</div>
     </div>
 
-    const ownedDocumentList = this.readOwnedDocumentList()
-    const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
-    const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+    // const ownedDocumentList = this.readOwnedDocumentList()
+    // const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
+    // const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
     const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
       <img src={notFoundImg} style={{ width: '50%' }} />
@@ -79,12 +83,21 @@ class DocumentPage extends ReactDrizzleComponent {
     const listSection = this.state.input.accountPrivateKey ? <div>
       <h1>{this.props.title}</h1>
       <div>Your Private Key: </div>
-      <div><textarea value={input.accountPrivateKey} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_PRIVATE_KEY)} /></div>
-      {rOwnedDocumentList}
+      {/* <div><textarea value={input.accountPrivateKey} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_PRIVATE_KEY)} /></div>
+      {rOwnedDocumentList} */}
     </div> : invalidPrivateKeyMessage
-
+    // console.log(this.state._getOwnedDocumentListDataKey)
+    const documentList = this.readDocument()
     const viewSection = <div>
-      <h1>Document #[documentId]</h1>
+      {/* <h1>Document #[documentId]</h1> */}
+      <Grid container spacing={3}>
+        <Grid item xs={6}>
+          <Card title='Document1' date='26/09/1997' description='description'></Card>
+        </Grid>
+        <Grid item xs={6}>
+          <Card title='Document2' date='26/09/1997' description='description'></Card>
+        </Grid>
+      </Grid>
     </div>
 
     return <div>
@@ -102,23 +115,23 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   handleSubmitButtonClick = () => {
-    const _getDocumentRecipientDataKey = this.retrieveDocumentRecipient(this.state.input.documentRecipient)
-    this._drizzleStateIfExist(_getDocumentRecipientDataKey, 'Account', 'account', this.proceedCreateDocument)
-    this.setState({ _getDocumentRecipientDataKey })
+    // const _getDocumentRecipientDataKey = this.retrieveDocumentRecipient(this.state.input.documentRecipient)
+    // this._drizzleStateIfExist(_getDocumentRecipientDataKey, 'Account', 'account', this.proceedCreateDocument)
+    // this.setState({ _getDocumentRecipientDataKey })
   }
 
-  retrieveDocumentRecipient = address => {
-    const { drizzle, drizzleState } = this.props
-    const ledger = new DocumentLedger(drizzle, drizzleState)
-    return ledger.getDocumentRecipientAccountInfo(address)
-  }
+  // retrieveDocumentRecipient = address => {
+  //   const { drizzle, drizzleState } = this.props
+  //   const ledger = new DocumentLedger(drizzle, drizzleState)
+  //   return ledger.getDocumentRecipientAccountInfo(address)
+  // }
 
-  proceedCreateDocument = recipientAccountData => {
-    const { drizzle, drizzleState } = this.props
-    const ledger = new DocumentLedger(drizzle, drizzleState)
-    const _transactionStackId = ledger.createDocument(recipientAccountData, this.state.input)
-    this.setState({ _transactionStackId })
-  }
+  // proceedCreateDocument = recipientAccountData => {
+  //   const { drizzle, drizzleState } = this.props
+  //   const ledger = new DocumentLedger(drizzle, drizzleState)
+  //   const _transactionStackId = ledger.createDocument(recipientAccountData, this.state.input)
+  //   this.setState({ _transactionStackId })
+  // }
 
   retrieveOwnedDocumentList = () => {
     const { drizzle, drizzleState } = this.props
@@ -157,9 +170,16 @@ class DocumentPage extends ReactDrizzleComponent {
     Object.keys(_getDocumentDataKey).forEach(documentId => {
       const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
       const cipher = result && result.value.data
-      const data = decryptRSA(privateKey, cipher)
-      decryptionResult[documentId] = data
+      // const data = decryptRSA(privateKey, cipher)
+      // decryptionResult[documentId] = data
+      decryptionResult[documentId] = cipher
     })
+    // Object.keys(_getDocumentDataKey).forEach(documentId => {
+    //   const result = this.props.drizzleState.contracts.Document.document[_getDocumentDataKey[documentId]]
+    //   const cipher = result && result.value
+    //   const data = decryptRSA(privateKey, cipher)
+    //   decryptionResult[documentId] = data
+    // })
     return decryptionResult
   }
 }
