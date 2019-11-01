@@ -6,6 +6,7 @@ import HomePage from '../containers/HomePage'
 import DocumentPage from '../containers/DocumentPage'
 import RequestPage from '../containers/RequestPage'
 import NotFoundPage from '../containers/404Page'
+import GrantedPage from '../containers/GrantedPage'
 
 const NotImplemented = () => <div><h2>Not Implemented</h2></div>
 const _AccountPage = props => () => <AccountPage {...props} />
@@ -28,6 +29,10 @@ const _GrantAccessPage = props => () => {
   return <RequestPage {...props} mode='GRANT' />
 }
 
+const _GrantedPage = props => () => {
+  return <GrantedPage {...props} />
+}
+
 const getRoutes = drizzleProps => {
   const routes = [
     <Route key='home-page' exact path='/' component={HomePage} />,
@@ -40,7 +45,7 @@ const getRoutes = drizzleProps => {
 
     <Route key='request-page' exact path='/request' render={_RequestPage(drizzleProps)} />,
     <Route key='grant-request-page' exact path='/grant' render={_GrantAccessPage(drizzleProps)} />,
-    <Route key='granted-page' exact path='/granted' render={NotImplemented} />,
+    <Route key='granted-page' exact path='/granted' render={_GrantedPage(drizzleProps)} />,
 
     <Route key='404' path='/404' component={NotFoundPage} />,
     <Redirect key='_redirect' to='/404' />,
