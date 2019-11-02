@@ -189,10 +189,10 @@ class DocumentPage extends ReactDrizzleComponent {
     </div>
 
     return <div>
-      {createSection}{listSection}{viewSection}
-      {/* {this.props.mode === 'CREATE' && createSection}
+      {/* {createSection}{listSection}{viewSection} */}
+      {this.props.mode === 'CREATE' && createSection}
       {this.props.mode === 'LIST' && listSection}
-      {this.props.mode === 'VIEW' && viewSection} */}
+      {this.props.mode === 'VIEW' && viewSection}
     </div>
   }
 
