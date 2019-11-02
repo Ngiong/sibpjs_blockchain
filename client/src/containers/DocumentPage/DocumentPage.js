@@ -8,23 +8,76 @@ import './styles.css'
 import notFoundImg from './assets/not-found.png'
 import Card from '../../components/Card'
 
+import TextField from '../../components/TextField'
+import DateField from '../../components/DateField'
+import SelectField from '../../components/SelectField'
+import Label from '../../components/Label'
+import Button from '../../components/Button'
+import Checkbox from '../../components/Checkbox'
+
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
   DOCUMENT_NUMBER: 'documentNumber', 
-  DOCUMENT_ISSUER: 'documentIssuer',
   DOCUMENT_RECIPIENT: 'documentRecipient',
-  DOCUMENT_DESCRIPTION: 'documentDescription',
+  DOCUMENT_SHORT_DESCRIPTION: 'documentShortDescription',
+  DOCUMENT_CREATED_AT: 'documentCreatedAt',
+
+  MEDICAL_SYMPTOMS: 'medicalSymptoms',
+  MEDICAL_DIAGNOSIS: 'medicalDiagnosis',
+  MEDICAL_DOCTOR: 'medicalDoctor',
+  MEDICAL_TREATMENT: 'medicalTreatment',
+  MEDICAL_PRESCRIPTION: 'medicalPrescription',
+
+  CLAIM_HEALTH_PROVIDER_NAME: 'claimHealthProviderName',
+  CLAIM_VISIT_DATE: 'claimVisitDate',
+  CLAIM_DIAGNOSIS: 'claimDiagnosis',
+  CLAIM_AMOUNT: 'claimAmount',
+
+  POLICY_CLIENT_NAME: 'policyClientName',
+  POLICY_ALLOWED_PROVIDERS: 'policyAllowedProviders',
+  POLICY_ALLOWED_TREAMENTS: 'policyAllowedTreatments',
+  POLICY_TNC: 'policyTnC',
+  POLICY_MAX_CLAIMS: 'policyMaxClaims',
+
+  DOCUMENT_ADDITIONAL_DESCRIPTION: 'documentAdditionalDescription',
+  DOCUMENT_ACCEPT_AGREEMENT: 'documentAcceptAgreement',
   ACCOUNT_PRIVATE_KEY: 'accountPrivateKey',
+}
+
+const DOCUMENT_TYPE_HEALTH = {
+  MEDICAL_RECORD: 'Rekam Medis',
+  INSURANCE_CLAIM: 'Klaim Asuransi',
+  INSURANCE_POLICY: 'Polis Asuransi',
 }
 
 class DocumentPage extends ReactDrizzleComponent {
   state = {
     input: {
-      documentType: 'INSURANCE_POLICY',
+      documentType: 'MEDICAL_RECORD',
       documentNumber: '',
-      documentIssuer: '',
       documentRecipient: '',
-      documentDescription: '',
+      documentShortDescription: '',
+      documentCreatedAt: '',
+
+      medicalSymptoms: '',
+      medicalDiagnosis: '',
+      medicalDoctor: '',
+      medicalTreatment: '',
+      medicalPrescription: '',
+
+      claimHealthProviderName: '',
+      claimVisitDate: '',
+      claimDiagnosis: '',
+      claimAmount: '',
+
+      policyClientName: '',
+      policyAllowedProviders: '',
+      policyAllowedTreatments: '',
+      policyTnC: '',
+      policyMaxClaims: '',
+
+      documentAdditionalDescription: '',
+      documentAcceptAgreement: '',
       accountPrivateKey: '',
     },
     _getDocumentRecipientDataKey: null,
@@ -53,21 +106,56 @@ class DocumentPage extends ReactDrizzleComponent {
   render = () => {
     const { input } = this.state
 
+    const medicalSection = input.documentType === 'MEDICAL_RECORD' ? <div>
+      <div className='account-page-section-title'>Informasi Rekam Medis</div>
+      {TextField('Gejala', input.medicalSymptoms, this.handleInputChange.bind(this, FIELD.MEDICAL_SYMPTOMS))}
+      {TextField('Diagnosis', input.medicalDiagnosis, this.handleInputChange.bind(this, FIELD.MEDICAL_DIAGNOSIS))}
+      {TextField('Nama Dokter', input.medicalDoctor, this.handleInputChange.bind(this, FIELD.MEDICAL_DOCTOR))}
+      {TextField('Penanganan', input.medicalTreatment, this.handleInputChange.bind(this, FIELD.MEDICAL_TREATMENT))}
+      {TextField('Resep Dokter (jika ada)', input.medicalPrescription, this.handleInputChange.bind(this, FIELD.MEDICAL_PRESCRIPTION))}
+    </div> : null
+
+    const claimSection = input.documentType === 'INSURANCE_CLAIM' ? <div>
+      <div className='account-page-section-title'>Informasi Klaim</div>
+      {TextField('Nama Penyedia Layanan Kesehatan', input.claimHealthProviderName, this.handleInputChange.bind(this, FIELD.CLAIM_HEALTH_PROVIDER_NAME))}
+      {DateField('Tanggal Kunjungan', input.claimVisitDate, this.handleInputChange.bind(this, FIELD.CLAIM_VISIT_DATE))}
+      {TextField('Diagnosis', input.claimDiagnosis, this.handleInputChange.bind(this, FIELD.CLAIM_DIAGNOSIS))}
+      {TextField('Jumlah Klaim', input.claimAmount, this.handleInputChange.bind(this, FIELD.CLAIM_AMOUNT))}
+    </div> : null
+
+    const policySection = input.documentType === 'INSURANCE_POLICY' ? <div>
+      <div className='account-page-section-title'>Informasi Polis</div>
+      {TextField('Nama Klien', input.policyClientName, this.handleInputChange.bind(this, FIELD.POLICY_CLIENT_NAME))}
+      {TextField('Partner Rumah Sakit', input.policyAllowedProviders, this.handleInputChange.bind(this, FIELD.POLICY_ALLOWED_PROVIDERS))}
+      {TextField('Cakupan Servis Asuransi ', input.policyAllowedTreatments, this.handleInputChange.bind(this, FIELD.POLICY_ALLOWED_TREAMENTS))}
+      {TextField('Syarat dan Ketentuan', input.policyTnC, this.handleInputChange.bind(this, FIELD.POLICY_TNC))}
+      {TextField('Maksimum Klaim', input.policyMaxClaims, this.handleInputChange.bind(this, FIELD.POLICY_MAX_CLAIMS))}
+    </div> : null
+
     const createSection = <div>
-      <h1>Create Document</h1>
+      <h1>Penerbitan Dokumen Baru</h1>
+      {TextField('Kepada', input.documentRecipient, this.handleInputChange.bind(this, FIELD.DOCUMENT_RECIPIENT))}
 
-      <div>Document Type: </div>
-      <div><input type='text' value={input.documentType} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_TYPE)} /></div>
-      <div>Document Number: </div>
-      <div><input type='text' value={input.documentNumber} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_NUMBER)} /></div>
-      <div>Document Issuer: </div>
-      <div><input type='text' value={input.documentIssuer} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_ISSUER)} /></div>
-      <div>Document Recipient: </div>
-      <div><input type='text' value={input.documentRecipient} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_RECIPIENT)} /></div>
-      <div>Document Description: </div>
-      <div><textarea value={input.documentDescription} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_DESCRIPTION)} /></div>
+      <div className='account-page-section-title'>Informasi Umum</div>
 
-      <div onClick={this.handleSubmitButtonClick}>Submit</div>
+      {SelectField('Jenis Dokumen', DOCUMENT_TYPE_HEALTH, input.documentType, this.handleInputChange.bind(this, FIELD.DOCUMENT_TYPE))}
+      {TextField('Nomor Dokumen', input.documentNumber, this.handleInputChange.bind(this, FIELD.DOCUMENT_NUMBER))}
+      {TextField('Deskripsi Singkat', input.documentShortDescription, this.handleInputChange.bind(this, FIELD.DOCUMENT_SHORT_DESCRIPTION))}
+      {DateField('Tanggal Terbit Dokumen', input.documentCreatedAt, this.handleInputChange.bind(this, FIELD.DOCUMENT_CREATED_AT))}
+      
+      { medicalSection }
+      { claimSection }
+      { policySection }
+
+      <div className='account-page-section-title'>Informasi Tambahan</div>
+      {TextField('Catatan', input.documentAdditionalDescription, this.handleInputChange.bind(this, FIELD.DOCUMENT_ADDITIONAL_DESCRIPTION))}
+
+      <div style={{ marginTop: 36 }}>
+        {Checkbox(input.accountAcceptAgreement, <span style={{ fontSize: 18 }}>
+          Saya telah membaca ulang untuk memastikan bahwa informasi yang saya masukkan adalah BENAR.
+        </span>, this.handleInputChange.bind(this, FIELD.DOCUMENT_ACCEPT_AGREEMENT), 'primary')}
+        {Button('Simpan', this.handleSubmitButtonClick, 'primary')}
+      </div>
     </div>
 
     // const ownedDocumentList = this.readOwnedDocumentList()
