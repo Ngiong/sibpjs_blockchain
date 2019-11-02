@@ -6,6 +6,7 @@ import { decryptRSA } from './rsa'
 import './styles.css'
 
 import notFoundImg from './assets/not-found.png'
+import documentNotFoundImg from './assets/document-not-found.png'
 import Card from '../../components/Card'
 
 import TextField from '../../components/TextField'
@@ -241,7 +242,7 @@ class DocumentPage extends ReactDrizzleComponent {
 
   renderOwnedDocumentList = documentList => {
     if (!documentList) return null
-    return Object.keys(documentList).map((documentId, idx) => {
+    const cardElements = Object.keys(documentList).map((documentId, idx) => {
       let document = {}
       try {
         document = JSON.parse(documentList[documentId])
@@ -253,7 +254,15 @@ class DocumentPage extends ReactDrizzleComponent {
         <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
               description='{documentShortDescription}' documentType='{documentType}'></Card>
       </Grid>
-    })
+    }).filter(s => s)
+    if (cardElements.length === 0) {
+      return <Grid item md={12} sm={12} xs={12}><div style={{ textAlign: 'center', marginTop: '2em' }}>
+        <img src={documentNotFoundImg} style={{ width: '50%' }} />
+        <h1 style={{ fontWeight: 500 }}>Dokumen Tidak Ditemukan.</h1>
+        Anda belum pernah menerima dokumen dengan jenis ini.
+        </div></Grid>
+    }
+    return cardElements
   }
 
   retrieveDocuments = documentIds => {
