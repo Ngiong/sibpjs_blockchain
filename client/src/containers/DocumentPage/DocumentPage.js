@@ -44,6 +44,11 @@ const FIELD = {
   ACCOUNT_PRIVATE_KEY: 'accountPrivateKey',
 }
 
+const COMMON_FIELDS = [FIELD.DOCUMENT_TYPE,FIELD.DOCUMENT_NUMBER,FIELD.DOCUMENT_RECIPIENT,FIELD.DOCUMENT_SHORT_DESCRIPTION, FIELD.DOCUMENT_CREATED_AT]
+const MEDICAL_FIELDS = [...COMMON_FIELDS, FIELD.MEDICAL_SYMPTOMS, FIELD.MEDICAL_DIAGNOSIS, FIELD.MEDICAL_DOCTOR, FIELD.MEDICAL_TREATMENT, FIELD.MEDICAL_PRESCRIPTION]
+const CLAIM_FIELDS = [...COMMON_FIELDS, FIELD.CLAIM_HEALTH_PROVIDER_NAME, FIELD.CLAIM_VISIT_DATE, FIELD.CLAIM_DIAGNOSIS, FIELD.CLAIM_AMOUNT]
+const POLICY_FIELDS = [...COMMON_FIELDS, FIELD.POLICY_CLIENT_NAME, FIELD.POLICY_ALLOWED_PROVIDERS, FIELD.POLICY_ALLOWED_TREAMENTS, FIELD.POLICY_TNC, FIELD.POLICY_MAX_CLAIMS]
+
 const DOCUMENT_TYPE_HEALTH = {
   MEDICAL_RECORD: 'Rekam Medis',
   INSURANCE_CLAIM: 'Klaim Asuransi',
@@ -214,10 +219,17 @@ class DocumentPage extends ReactDrizzleComponent {
     return ledger.getDocumentRecipientAccountInfo(address)
   }
 
+  extractDocumentObject = () => {
+    const fields = this.state.input.documentType === 'MEDICAL_RECORD' ? MEDICAL_FIELDS
+      : this.state.input.documentType === 'INSURANCE_CLAIM' ? CLAIM_FIELDS : POLICY_FIELDS
+    return fields.reduce((dict, fieldName) => ({ ...dict, [fieldName]: this.state.input[fieldName] }), {})
+  }
+
   proceedCreateDocument = recipientAccountData => {
     const { drizzle, drizzleState } = this.props
     const ledger = new DocumentLedger(drizzle, drizzleState)
-    const _transactionStackId = ledger.createDocument(recipientAccountData, this.state.input)
+    const extractedObject = this.extractDocumentObject()
+    const _transactionStackId = ledger.createDocument(recipientAccountData, extractedObject)
     this.setState({ _transactionStackId })
   }
 
