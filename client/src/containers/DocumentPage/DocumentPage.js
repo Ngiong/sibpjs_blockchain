@@ -198,7 +198,7 @@ class DocumentPage extends ReactDrizzleComponent {
 
   handleInputChange = (field, event) => {
     let newInput = { ...this.state.input }
-    newInput[field] = typeof(event) === 'string' ? event : event.target.value
+    newInput[field] = typeof(event) === 'string' || typeof(event) === 'boolean' ? event : event.target.value
     this.setState({ input: newInput })
   }
 
