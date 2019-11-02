@@ -13,10 +13,11 @@ class SimpleCard extends React.Component{
       // onMouseOut={true} 
       <Card raised={true}>
         <CardContent>
-          <Typography color="textSecondary" gutterBottom>
-            {this.props.date}
-          </Typography>
-          <Typography variant="h5" component="h2" style={{fontSize:14}}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <div style={{ fontSize: 24 }}>#{this.props.id}</div>
+            <div style={{ fontSize: 12 }}>{this.props.date}</div>
+          </div>
+          <Typography color='primary'>
             {this.props.title}
           </Typography>
           <Typography variant="body2" component="p" style={{marginBottom:12}}>

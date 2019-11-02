@@ -163,9 +163,9 @@ class DocumentPage extends ReactDrizzleComponent {
       </div>
     </div>
 
-    // const ownedDocumentList = this.readOwnedDocumentList()
-    // const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
-    // const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+    const ownedDocumentList = this.readOwnedDocumentList()
+    const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
+    const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
     const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
       <img src={notFoundImg} style={{ width: '50%' }} />
@@ -175,22 +175,14 @@ class DocumentPage extends ReactDrizzleComponent {
 
     const listSection = this.state.input.accountPrivateKey ? <div>
       <h1>{this.props.title}</h1>
-      <div>Your Private Key: </div>
-      {/* <div><textarea value={input.accountPrivateKey} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_PRIVATE_KEY)} /></div>
-      {rOwnedDocumentList} */}
+      <Grid container spacing={3}>
+        {rOwnedDocumentList}
+      </Grid>
     </div> : invalidPrivateKeyMessage
     // console.log(this.state._getOwnedDocumentListDataKey)
     const documentList = this.readDocument()
     const viewSection = <div>
-      {/* <h1>Document #[documentId]</h1> */}
-      <Grid container spacing={3}>
-        <Grid item md={6} sm={12} xs={12}>
-          <Card title='Document1' date='26/09/1997' description='description'></Card>
-        </Grid>
-        <Grid item md={6} sm={12} xs={12}>
-          <Card title='Document2' date='26/09/1997' description='description'></Card>
-        </Grid>
-      </Grid>
+      <h1>Document #[documentId]</h1>
     </div>
 
     return <div>
@@ -248,7 +240,19 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   renderOwnedDocumentList = documentList => {
-    return <div>{JSON.stringify(documentList)}</div>
+    if (!documentList) return null
+    return Object.keys(documentList).map((documentId, idx) => {
+      let document = {}
+      try {
+        document = JSON.parse(documentList[documentId])
+      } catch (err) {
+        return null
+      }
+      if (this.props.types.indexOf(document.documentType) === -1) return null
+      return <Grid key={idx} item md={6} sm={12} xs={12}>
+        <Card title={`#${documentId}`} date='26/09/1997' description='description'></Card>
+      </Grid>
+    })
   }
 
   retrieveDocuments = documentIds => {
@@ -270,16 +274,9 @@ class DocumentPage extends ReactDrizzleComponent {
     Object.keys(_getDocumentDataKey).forEach(documentId => {
       const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
       const cipher = result && result.value.data
-      // const data = decryptRSA(privateKey, cipher)
-      // decryptionResult[documentId] = data
-      decryptionResult[documentId] = cipher
+      const data = decryptRSA(privateKey, cipher)
+      decryptionResult[documentId] = data
     })
-    // Object.keys(_getDocumentDataKey).forEach(documentId => {
-    //   const result = this.props.drizzleState.contracts.Document.document[_getDocumentDataKey[documentId]]
-    //   const cipher = result && result.value
-    //   const data = decryptRSA(privateKey, cipher)
-    //   decryptionResult[documentId] = data
-    // })
     return decryptionResult
   }
 }
