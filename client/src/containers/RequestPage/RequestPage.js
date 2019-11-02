@@ -115,13 +115,13 @@ class RequestPage extends ReactDrizzleComponent {
     </div>
 
     if (this.props.mode === 'GRANT')
-      return <div>
+      return <div className='animated zoomIn faster'>
         {Activity(this.state.selectDialogActivity, 'Pilih Dokumen', documentSelectionSection, () => this.setState({ selectDialogActivity: false }))}
         {receivedRequestListSection}
       </div>
 
     if (this.props.mode === 'REQUEST')
-      return <div>
+      return <div className='animated zoomIn faster'>
         {createRequestSection}
         {sentRequestListSection}
       </div>

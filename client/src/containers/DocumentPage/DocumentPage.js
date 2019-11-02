@@ -187,7 +187,7 @@ class DocumentPage extends ReactDrizzleComponent {
       <h1>Document #[documentId]</h1>
     </div>
 
-    return <div>
+    return <div className='animated zoomIn faster'>
       {/* {createSection}{listSection}{viewSection} */}
       {this.props.mode === 'CREATE' && createSection}
       {this.props.mode === 'LIST' && listSection}

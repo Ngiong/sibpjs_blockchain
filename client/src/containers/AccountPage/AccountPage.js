@@ -148,7 +148,7 @@ class AccountPage extends ReactDrizzleComponent {
       </div> }
     </div>
 
-    return <div className='account-page-container'>
+    return <div className='account-page-container animated zoomIn faster'>
       <h1>Profil Anda</h1>
       <div>
         { SelectField('Tipe Akun', ACCOUNT_TYPE, input.accountType, this.handleInputChange.bind(this, FIELD.ACCOUNT_TYPE)) }
