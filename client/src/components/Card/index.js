@@ -7,7 +7,9 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 class SimpleCard extends React.Component{
-  render(){ 
+  render(){
+    const type = this.props.documentType === 'MEDICAL_RECORD' ? 'Rekam Medis'
+      : this.props.documentType === 'INSURANCE_CLAIM' ? 'Klaim Asuransi' : 'Polis Asuransi'
     return (
       // <Card onMouseOver={true} 
       // onMouseOut={true} 
@@ -20,7 +22,11 @@ class SimpleCard extends React.Component{
           <Typography color='primary'>
             {this.props.title}
           </Typography>
-          <Typography variant="body2" component="p" style={{marginBottom:12}}>
+          <div>
+            Jenis: <Typography color='secondary' style={{ fontSize: 16, display: 'inline' }}>{type}</Typography>
+          </div>
+          <div style={{ height: '1.3em' }} />
+          <Typography variant="body2" component="p" style={{ fontSize: 18 }}>
             {this.props.description}
           </Typography>
         </CardContent>
