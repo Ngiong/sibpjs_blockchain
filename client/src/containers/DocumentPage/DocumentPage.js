@@ -176,6 +176,7 @@ class DocumentPage extends ReactDrizzleComponent {
 
     const listSection = this.state.input.accountPrivateKey ? <div>
       <h1>{this.props.title}</h1>
+      <div style={{ height: '2em' }} />
       <Grid container spacing={3}>
         {rOwnedDocumentList}
       </Grid>
@@ -256,7 +257,7 @@ class DocumentPage extends ReactDrizzleComponent {
       </Grid>
     }).filter(s => s)
     if (cardElements.length === 0) {
-      return <Grid item md={12} sm={12} xs={12}><div style={{ textAlign: 'center', marginTop: '2em' }}>
+      return <Grid item md={12} sm={12} xs={12}><div style={{ textAlign: 'center' }}>
         <img src={documentNotFoundImg} style={{ width: '50%' }} />
         <h1 style={{ fontWeight: 500 }}>Dokumen Tidak Ditemukan.</h1>
         Anda belum pernah menerima dokumen dengan jenis ini.

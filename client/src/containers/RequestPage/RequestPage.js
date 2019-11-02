@@ -14,6 +14,7 @@ import './styles.css'
 
 import accountIcon from './assets/account-icon.png'
 import accountIconWhite from './assets/account-icon-white.png'
+import noRequestImg from './assets/no-request.png'
 
 const FIELD = {
   REQUEST_TO: 'requestTo',
@@ -277,7 +278,10 @@ class RequestPage extends ReactDrizzleComponent {
     const emptyList = content.filter(s => s).length === 0
 
     return <div className='request-page-list'>
-      { emptyList ? <span style={{ fontSize: '1.2em' }}>Belum ada pihak yang meminta akses terhadap dokumen Anda.</span> : content }
+      { emptyList ? <div style={{ textAlign: 'center'}}>
+        <img src={noRequestImg} style={{ width: '50%' }} />
+        <h1 style={{ fontWeight: 500 }}>Permintaan Akses <br/> Tidak Ditemukan</h1>
+      </div> : content }
     </div>
   }
 
