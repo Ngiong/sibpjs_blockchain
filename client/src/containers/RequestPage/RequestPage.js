@@ -3,6 +3,7 @@ import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import AccessRequestLedger from './ledger'
 import { encryptRSA, decryptRSA } from './rsa'
 
+import Activity from '../../components/Activity'
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
 import SelectField from '../../components/SelectField'
@@ -30,6 +31,8 @@ class RequestPage extends ReactDrizzleComponent {
       chosenRequestEntry: {},
       chosenDocuments: [],
     },
+    selectDialogActivity: false,
+
     _getAccessRequestByGranterListDataKey: null,
     _getAccessRequestByGranterDataKey: {},
     _getAccessRequestByRequesterListDataKey: null,
@@ -113,8 +116,8 @@ class RequestPage extends ReactDrizzleComponent {
 
     if (this.props.mode === 'GRANT')
       return <div>
+        {Activity(this.state.selectDialogActivity, 'Pilih Dokumen', documentSelectionSection, () => this.setState({ selectDialogActivity: false }))}
         {receivedRequestListSection}
-        {documentSelectionSection}
       </div>
 
     if (this.props.mode === 'REQUEST')
@@ -135,7 +138,7 @@ class RequestPage extends ReactDrizzleComponent {
   handleSelectAccessRequest = requestData => {
     let newInput = { ...this.state.input }
     newInput.chosenRequestEntry = requestData
-    this.setState({ input: newInput })
+    this.setState({ input: newInput, selectDialogActivity: true })
   }
 
   handleCreateRequestSubmission = () => {
