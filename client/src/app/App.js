@@ -66,8 +66,8 @@ class App extends React.Component {
           <Router>
             <Toast visible={toastVisible} message={toastMessage} onClose={this.handleToastClose} />
             <LoginInfoBar {...drizzleProps} />
-            <div style={{ maxWidth: 500, padding: '64px 20px 100px 20px', margin: 'auto' }}>{routes}</div>
             <NavigationBar {...drizzleProps} />
+            <div style={{ maxWidth: 500, padding: '64px 20px 100px 20px', margin: 'auto' }}>{routes}</div>
           </Router>
         </MuiPickersUtilsProvider>
       </MuiThemeProvider>

@@ -6,25 +6,84 @@ import { decryptRSA } from './rsa'
 import './styles.css'
 
 import notFoundImg from './assets/not-found.png'
+import documentNotFoundImg from './assets/document-not-found.png'
 import Card from '../../components/Card'
+
+import TextField from '../../components/TextField'
+import DateField from '../../components/DateField'
+import SelectField from '../../components/SelectField'
+import Label from '../../components/Label'
+import Button from '../../components/Button'
+import Checkbox from '../../components/Checkbox'
 
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
   DOCUMENT_NUMBER: 'documentNumber', 
-  DOCUMENT_ISSUER: 'documentIssuer',
   DOCUMENT_RECIPIENT: 'documentRecipient',
-  DOCUMENT_DESCRIPTION: 'documentDescription',
+  DOCUMENT_SHORT_DESCRIPTION: 'documentShortDescription',
+  DOCUMENT_CREATED_AT: 'documentCreatedAt',
+
+  MEDICAL_SYMPTOMS: 'medicalSymptoms',
+  MEDICAL_DIAGNOSIS: 'medicalDiagnosis',
+  MEDICAL_DOCTOR: 'medicalDoctor',
+  MEDICAL_TREATMENT: 'medicalTreatment',
+  MEDICAL_PRESCRIPTION: 'medicalPrescription',
+
+  CLAIM_HEALTH_PROVIDER_NAME: 'claimHealthProviderName',
+  CLAIM_VISIT_DATE: 'claimVisitDate',
+  CLAIM_DIAGNOSIS: 'claimDiagnosis',
+  CLAIM_AMOUNT: 'claimAmount',
+
+  POLICY_CLIENT_NAME: 'policyClientName',
+  POLICY_ALLOWED_PROVIDERS: 'policyAllowedProviders',
+  POLICY_ALLOWED_TREAMENTS: 'policyAllowedTreatments',
+  POLICY_TNC: 'policyTnC',
+  POLICY_MAX_CLAIMS: 'policyMaxClaims',
+
+  DOCUMENT_ADDITIONAL_DESCRIPTION: 'documentAdditionalDescription',
+  DOCUMENT_ACCEPT_AGREEMENT: 'documentAcceptAgreement',
   ACCOUNT_PRIVATE_KEY: 'accountPrivateKey',
+}
+
+const COMMON_FIELDS = [FIELD.DOCUMENT_TYPE,FIELD.DOCUMENT_NUMBER,FIELD.DOCUMENT_RECIPIENT,FIELD.DOCUMENT_SHORT_DESCRIPTION, FIELD.DOCUMENT_CREATED_AT]
+const MEDICAL_FIELDS = [...COMMON_FIELDS, FIELD.MEDICAL_SYMPTOMS, FIELD.MEDICAL_DIAGNOSIS, FIELD.MEDICAL_DOCTOR, FIELD.MEDICAL_TREATMENT, FIELD.MEDICAL_PRESCRIPTION]
+const CLAIM_FIELDS = [...COMMON_FIELDS, FIELD.CLAIM_HEALTH_PROVIDER_NAME, FIELD.CLAIM_VISIT_DATE, FIELD.CLAIM_DIAGNOSIS, FIELD.CLAIM_AMOUNT]
+const POLICY_FIELDS = [...COMMON_FIELDS, FIELD.POLICY_CLIENT_NAME, FIELD.POLICY_ALLOWED_PROVIDERS, FIELD.POLICY_ALLOWED_TREAMENTS, FIELD.POLICY_TNC, FIELD.POLICY_MAX_CLAIMS]
+
+const DOCUMENT_TYPE_HEALTH = {
+  MEDICAL_RECORD: 'Rekam Medis',
+  INSURANCE_CLAIM: 'Klaim Asuransi',
+  INSURANCE_POLICY: 'Polis Asuransi',
 }
 
 class DocumentPage extends ReactDrizzleComponent {
   state = {
     input: {
-      documentType: 'INSURANCE_POLICY',
+      documentType: 'MEDICAL_RECORD',
       documentNumber: '',
-      documentIssuer: '',
       documentRecipient: '',
-      documentDescription: '',
+      documentShortDescription: '',
+      documentCreatedAt: '',
+
+      medicalSymptoms: '',
+      medicalDiagnosis: '',
+      medicalDoctor: '',
+      medicalTreatment: '',
+      medicalPrescription: '',
+
+      claimHealthProviderName: '',
+      claimVisitDate: '',
+      claimDiagnosis: '',
+      claimAmount: '',
+
+      policyClientName: '',
+      policyAllowedProviders: '',
+      policyAllowedTreatments: '',
+      policyTnC: '',
+      policyMaxClaims: '',
+
+      documentAdditionalDescription: '',
+      documentAcceptAgreement: '',
       accountPrivateKey: '',
     },
     _getDocumentRecipientDataKey: null,
@@ -53,26 +112,61 @@ class DocumentPage extends ReactDrizzleComponent {
   render = () => {
     const { input } = this.state
 
+    const medicalSection = input.documentType === 'MEDICAL_RECORD' ? <div>
+      <div className='account-page-section-title'>Informasi Rekam Medis</div>
+      {TextField('Gejala', input.medicalSymptoms, this.handleInputChange.bind(this, FIELD.MEDICAL_SYMPTOMS))}
+      {TextField('Diagnosis', input.medicalDiagnosis, this.handleInputChange.bind(this, FIELD.MEDICAL_DIAGNOSIS))}
+      {TextField('Nama Dokter', input.medicalDoctor, this.handleInputChange.bind(this, FIELD.MEDICAL_DOCTOR))}
+      {TextField('Penanganan', input.medicalTreatment, this.handleInputChange.bind(this, FIELD.MEDICAL_TREATMENT))}
+      {TextField('Resep Dokter (jika ada)', input.medicalPrescription, this.handleInputChange.bind(this, FIELD.MEDICAL_PRESCRIPTION))}
+    </div> : null
+
+    const claimSection = input.documentType === 'INSURANCE_CLAIM' ? <div>
+      <div className='account-page-section-title'>Informasi Klaim</div>
+      {TextField('Nama Penyedia Layanan Kesehatan', input.claimHealthProviderName, this.handleInputChange.bind(this, FIELD.CLAIM_HEALTH_PROVIDER_NAME))}
+      {DateField('Tanggal Kunjungan', input.claimVisitDate, this.handleInputChange.bind(this, FIELD.CLAIM_VISIT_DATE))}
+      {TextField('Diagnosis', input.claimDiagnosis, this.handleInputChange.bind(this, FIELD.CLAIM_DIAGNOSIS))}
+      {TextField('Jumlah Klaim', input.claimAmount, this.handleInputChange.bind(this, FIELD.CLAIM_AMOUNT))}
+    </div> : null
+
+    const policySection = input.documentType === 'INSURANCE_POLICY' ? <div>
+      <div className='account-page-section-title'>Informasi Polis</div>
+      {TextField('Nama Klien', input.policyClientName, this.handleInputChange.bind(this, FIELD.POLICY_CLIENT_NAME))}
+      {TextField('Partner Rumah Sakit', input.policyAllowedProviders, this.handleInputChange.bind(this, FIELD.POLICY_ALLOWED_PROVIDERS))}
+      {TextField('Cakupan Servis Asuransi ', input.policyAllowedTreatments, this.handleInputChange.bind(this, FIELD.POLICY_ALLOWED_TREAMENTS))}
+      {TextField('Syarat dan Ketentuan', input.policyTnC, this.handleInputChange.bind(this, FIELD.POLICY_TNC))}
+      {TextField('Maksimum Klaim', input.policyMaxClaims, this.handleInputChange.bind(this, FIELD.POLICY_MAX_CLAIMS))}
+    </div> : null
+
     const createSection = <div>
-      <h1>Create Document</h1>
+      <h1>Penerbitan Dokumen Baru</h1>
+      {TextField('Kepada', input.documentRecipient, this.handleInputChange.bind(this, FIELD.DOCUMENT_RECIPIENT))}
 
-      <div>Document Type: </div>
-      <div><input type='text' value={input.documentType} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_TYPE)} /></div>
-      <div>Document Number: </div>
-      <div><input type='text' value={input.documentNumber} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_NUMBER)} /></div>
-      <div>Document Issuer: </div>
-      <div><input type='text' value={input.documentIssuer} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_ISSUER)} /></div>
-      <div>Document Recipient: </div>
-      <div><input type='text' value={input.documentRecipient} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_RECIPIENT)} /></div>
-      <div>Document Description: </div>
-      <div><textarea value={input.documentDescription} onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_DESCRIPTION)} /></div>
+      <div className='account-page-section-title'>Informasi Umum</div>
 
-      <div onClick={this.handleSubmitButtonClick}>Submit</div>
+      {SelectField('Jenis Dokumen', DOCUMENT_TYPE_HEALTH, input.documentType, this.handleInputChange.bind(this, FIELD.DOCUMENT_TYPE))}
+      {TextField('Nomor Dokumen', input.documentNumber, this.handleInputChange.bind(this, FIELD.DOCUMENT_NUMBER))}
+      {TextField('Deskripsi Singkat', input.documentShortDescription, this.handleInputChange.bind(this, FIELD.DOCUMENT_SHORT_DESCRIPTION))}
+      {DateField('Tanggal Terbit Dokumen', input.documentCreatedAt, this.handleInputChange.bind(this, FIELD.DOCUMENT_CREATED_AT))}
+      
+      { medicalSection }
+      { claimSection }
+      { policySection }
+
+      <div className='account-page-section-title'>Informasi Tambahan</div>
+      {TextField('Catatan', input.documentAdditionalDescription, this.handleInputChange.bind(this, FIELD.DOCUMENT_ADDITIONAL_DESCRIPTION))}
+
+      <div style={{ marginTop: 36 }}>
+        {Checkbox(input.accountAcceptAgreement, <span style={{ fontSize: 18 }}>
+          Saya telah membaca ulang untuk memastikan bahwa informasi yang saya masukkan adalah BENAR.
+        </span>, this.handleInputChange.bind(this, FIELD.DOCUMENT_ACCEPT_AGREEMENT), 'primary')}
+        {Button('Simpan', this.handleSubmitButtonClick, 'primary')}
+      </div>
     </div>
 
-    // const ownedDocumentList = this.readOwnedDocumentList()
-    // const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
-    // const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+    const ownedDocumentList = this.readOwnedDocumentList()
+    const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
+    const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
     const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
       <img src={notFoundImg} style={{ width: '50%' }} />
@@ -82,35 +176,28 @@ class DocumentPage extends ReactDrizzleComponent {
 
     const listSection = this.state.input.accountPrivateKey ? <div>
       <h1>{this.props.title}</h1>
-      <div>Your Private Key: </div>
-      {/* <div><textarea value={input.accountPrivateKey} onChange={this.handleInputChange.bind(this, FIELD.ACCOUNT_PRIVATE_KEY)} /></div>
-      {rOwnedDocumentList} */}
+      <div style={{ height: '2em' }} />
+      <Grid container spacing={3}>
+        {rOwnedDocumentList}
+      </Grid>
     </div> : invalidPrivateKeyMessage
     // console.log(this.state._getOwnedDocumentListDataKey)
     const documentList = this.readDocument()
     const viewSection = <div>
-      {/* <h1>Document #[documentId]</h1> */}
-      <Grid container spacing={3}>
-        <Grid item md={6} sm={12} xs={12}>
-          <Card title='Document1' date='26/09/1997' description='description'></Card>
-        </Grid>
-        <Grid item md={6} sm={12} xs={12}>
-          <Card title='Document2' date='26/09/1997' description='description'></Card>
-        </Grid>
-      </Grid>
+      <h1>Document #[documentId]</h1>
     </div>
 
-    return <div>
-      {createSection}{listSection}{viewSection}
-      {/* {this.props.mode === 'CREATE' && createSection}
+    return <div className='animated zoomIn faster'>
+      {/* {createSection}{listSection}{viewSection} */}
+      {this.props.mode === 'CREATE' && createSection}
       {this.props.mode === 'LIST' && listSection}
-      {this.props.mode === 'VIEW' && viewSection} */}
+      {this.props.mode === 'VIEW' && viewSection}
     </div>
   }
 
   handleInputChange = (field, event) => {
     let newInput = { ...this.state.input }
-    newInput[field] = typeof(event) === 'string' ? event : event.target.value
+    newInput[field] = typeof(event) === 'string' || typeof(event) === 'boolean' ? event : event.target.value
     this.setState({ input: newInput })
   }
 
@@ -126,10 +213,17 @@ class DocumentPage extends ReactDrizzleComponent {
     return ledger.getDocumentRecipientAccountInfo(address)
   }
 
+  extractDocumentObject = () => {
+    const fields = this.state.input.documentType === 'MEDICAL_RECORD' ? MEDICAL_FIELDS
+      : this.state.input.documentType === 'INSURANCE_CLAIM' ? CLAIM_FIELDS : POLICY_FIELDS
+    return fields.reduce((dict, fieldName) => ({ ...dict, [fieldName]: this.state.input[fieldName] }), {})
+  }
+
   proceedCreateDocument = recipientAccountData => {
     const { drizzle, drizzleState } = this.props
     const ledger = new DocumentLedger(drizzle, drizzleState)
-    const _transactionStackId = ledger.createDocument(recipientAccountData, this.state.input)
+    const extractedObject = this.extractDocumentObject()
+    const _transactionStackId = ledger.createDocument(recipientAccountData, extractedObject)
     this.setState({ _transactionStackId })
   }
 
@@ -148,7 +242,28 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   renderOwnedDocumentList = documentList => {
-    return <div>{JSON.stringify(documentList)}</div>
+    if (!documentList) return null
+    const cardElements = Object.keys(documentList).map((documentId, idx) => {
+      let document = {}
+      try {
+        document = JSON.parse(documentList[documentId])
+      } catch (err) {
+        return null
+      }
+      if (this.props.types.indexOf(document.documentType) === -1) return null
+      return <Grid key={idx} item md={6} sm={12} xs={12}>
+        <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
+              description='{documentShortDescription}' documentType='{documentType}'></Card>
+      </Grid>
+    }).filter(s => s)
+    if (cardElements.length === 0) {
+      return <Grid item md={12} sm={12} xs={12}><div style={{ textAlign: 'center' }}>
+        <img src={documentNotFoundImg} style={{ width: '50%' }} />
+        <h1 style={{ fontWeight: 500 }}>Dokumen Tidak Ditemukan.</h1>
+        Anda belum pernah menerima dokumen dengan jenis ini.
+        </div></Grid>
+    }
+    return cardElements
   }
 
   retrieveDocuments = documentIds => {
@@ -170,16 +285,9 @@ class DocumentPage extends ReactDrizzleComponent {
     Object.keys(_getDocumentDataKey).forEach(documentId => {
       const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
       const cipher = result && result.value.data
-      // const data = decryptRSA(privateKey, cipher)
-      // decryptionResult[documentId] = data
-      decryptionResult[documentId] = cipher
+      const data = decryptRSA(privateKey, cipher)
+      decryptionResult[documentId] = data
     })
-    // Object.keys(_getDocumentDataKey).forEach(documentId => {
-    //   const result = this.props.drizzleState.contracts.Document.document[_getDocumentDataKey[documentId]]
-    //   const cipher = result && result.value
-    //   const data = decryptRSA(privateKey, cipher)
-    //   decryptionResult[documentId] = data
-    // })
     return decryptionResult
   }
 }

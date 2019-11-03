@@ -3,6 +3,7 @@ import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import AccessRequestLedger from './ledger'
 import { encryptRSA, decryptRSA } from './rsa'
 
+import Activity from '../../components/Activity'
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
 import SelectField from '../../components/SelectField'
@@ -14,6 +15,7 @@ import './styles.css'
 
 import accountIcon from './assets/account-icon.png'
 import accountIconWhite from './assets/account-icon-white.png'
+import noRequestImg from './assets/no-request.png'
 
 const FIELD = {
   REQUEST_TO: 'requestTo',
@@ -29,6 +31,8 @@ class RequestPage extends ReactDrizzleComponent {
       chosenRequestEntry: {},
       chosenDocuments: [],
     },
+    selectDialogActivity: false,
+
     _getAccessRequestByGranterListDataKey: null,
     _getAccessRequestByGranterDataKey: {},
     _getAccessRequestByRequesterListDataKey: null,
@@ -111,13 +115,13 @@ class RequestPage extends ReactDrizzleComponent {
     </div>
 
     if (this.props.mode === 'GRANT')
-      return <div>
+      return <div className='animated zoomIn faster'>
+        {Activity(this.state.selectDialogActivity, 'Pilih Dokumen', documentSelectionSection, () => this.setState({ selectDialogActivity: false }))}
         {receivedRequestListSection}
-        {documentSelectionSection}
       </div>
 
     if (this.props.mode === 'REQUEST')
-      return <div>
+      return <div className='animated zoomIn faster'>
         {createRequestSection}
         {sentRequestListSection}
       </div>
@@ -134,7 +138,7 @@ class RequestPage extends ReactDrizzleComponent {
   handleSelectAccessRequest = requestData => {
     let newInput = { ...this.state.input }
     newInput.chosenRequestEntry = requestData
-    this.setState({ input: newInput })
+    this.setState({ input: newInput, selectDialogActivity: true })
   }
 
   handleCreateRequestSubmission = () => {
@@ -277,7 +281,10 @@ class RequestPage extends ReactDrizzleComponent {
     const emptyList = content.filter(s => s).length === 0
 
     return <div className='request-page-list'>
-      { emptyList ? <span style={{ fontSize: '1.2em' }}>Belum ada pihak yang meminta akses terhadap dokumen Anda.</span> : content }
+      { emptyList ? <div style={{ textAlign: 'center'}}>
+        <img src={noRequestImg} style={{ width: '50%' }} />
+        <h1 style={{ fontWeight: 500 }}>Permintaan Akses <br/> Tidak Ditemukan</h1>
+      </div> : content }
     </div>
   }
 

@@ -42,7 +42,7 @@ class LoginInfoBar extends React.Component {
     </div> : null
 
     let sidebar = this.state.sidebarOpened ? <div>
-      <div className='login-info-bar-sidebar'>
+      <div className='login-info-bar-sidebar animated slideInLeft faster'>
         { profile }
         { navigation }
       </div>

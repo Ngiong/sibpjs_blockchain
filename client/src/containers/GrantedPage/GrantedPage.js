@@ -34,7 +34,7 @@ class GrantedPage extends ReactDrizzleComponent {
             <div>{JSON.stringify(authDocumentData)}</div>
         </div> : null
 
-        return <div>
+        return <div className='animated zoomIn faster'>
             <h1>Pengajuan Akses Terkabul (Granted)</h1>
             <div>Halaman ini digunakan untuk melihat isi dokumen yang telah diberikan kepada Anda.</div>
 
