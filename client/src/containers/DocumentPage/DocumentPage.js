@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import DocumentLedger from './ledger'
 import {Grid} from '@material-ui/core'
@@ -97,6 +98,8 @@ class DocumentPage extends ReactDrizzleComponent {
     this._drizzleStateDidUpdate(prevProps, '_getDocumentRecipientDataKey', 'Account', 'account', this.proceedCreateDocument)
     this._drizzleStateDidUpdate(prevProps, '_getDocumentIssuerDataKey', 'Account', 'account', this.proceedCreateDocument)
     this._drizzleStateDidUpdate(prevProps, '_getOwnedDocumentListDataKey', 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
+
+    this._drizzleStateTxSuccess(prevProps, this.state._transactionStackId, this.handleCompleteCreateDocument)
   }
 
   componentDidMount = () => {
@@ -318,6 +321,11 @@ class DocumentPage extends ReactDrizzleComponent {
     })
     return decryptionResult
   }
+
+  handleCompleteCreateDocument = () => {
+    window.SHOW_TOAST('Selamat! Dokumen Anda telah berhasil diterbitkan.')
+    this.props.history.push('/')
+  }
 }
 
-export default DocumentPage
+export default withRouter(DocumentPage)

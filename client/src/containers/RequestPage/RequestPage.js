@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import AccessRequestLedger from './ledger'
 import { encryptRSA, decryptRSA } from './rsa'
@@ -395,4 +396,4 @@ class RequestPage extends ReactDrizzleComponent {
   }
 }
 
-export default RequestPage
+export default withRouter(RequestPage)

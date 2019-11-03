@@ -27,7 +27,7 @@ class DocumentLedger {
     console.log('DocumentData', documentData)
 
     const cipher = encryptRSA(recipient.accountPublicKey, JSON.stringify(documentData))
-    this.submitDocumentContract(recipientAddress, issuerAddress, input.documentType, cipher, '_signature')
+    return this.submitDocumentContract(recipientAddress, issuerAddress, input.documentType, cipher, '_signature')
   }
 
   submitDocumentContract = (owner, issuer, documentType, cipher, signature) => {
