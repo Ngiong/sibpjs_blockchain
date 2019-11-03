@@ -7,8 +7,8 @@ import './styles.css'
 
 import notFoundImg from './assets/not-found.png'
 import documentNotFoundImg from './assets/document-not-found.png'
-import Card from '../../components/Card'
 
+import Card from '../../components/Card'
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
 import SelectField from '../../components/SelectField'

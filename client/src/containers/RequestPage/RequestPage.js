@@ -3,6 +3,9 @@ import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import AccessRequestLedger from './ledger'
 import { encryptRSA, decryptRSA } from './rsa'
 
+import {Grid} from '@material-ui/core'
+
+import Card from '../../components/Card'
 import Activity from '../../components/Activity'
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
@@ -107,16 +110,17 @@ class RequestPage extends ReactDrizzleComponent {
     const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
     const documentSelectionSection = <div>
-      <h1>Pemberian Akses</h1>
-      <h3>Kepada: {this.state.input.chosenRequestEntry.granter}</h3>
-      <div>Selecting requestId: {this.state.input.chosenRequestEntry.id}</div>
+      <h1>Pemberian Akses #{this.state.input.chosenRequestEntry.id}</h1>
+      <h3><span style={{ fontWeight: 500, color: 'black' }}>Kepada:</span>
+      <span style={{ fontSize: '1.1em'}}> {this.state.input.chosenRequestEntry.granter}</span></h3>
       { rOwnedDocumentList }
-      <div>{Button('Kirim', this.handleGrantButtonOnClick, 'secondary', 'small', this.shouldDisableGrantButton())}</div>
+      {/* <div>{Button('Kirim', this.handleGrantButtonOnClick, 'secondary', 'small', this.shouldDisableGrantButton())}</div> */}
     </div>
 
     if (this.props.mode === 'GRANT')
       return <div className='animated zoomIn faster'>
-        {Activity(this.state.selectDialogActivity, 'Pilih Dokumen', documentSelectionSection, () => this.setState({ selectDialogActivity: false }))}
+        {Activity(this.state.selectDialogActivity, 'Pilih Dokumen', documentSelectionSection, () => this.setState({ selectDialogActivity: false }),
+        { text: 'KIRIM', onClick: this.handleGrantButtonOnClick })}
         {receivedRequestListSection}
       </div>
 
@@ -322,20 +326,37 @@ class RequestPage extends ReactDrizzleComponent {
   }
 
   renderOwnedDocumentList = documentList => {
-    return <div> 
-    { Object.keys(documentList).map((s, idx) => {
+    if (!documentList) return null
+    const cardElements = Object.keys(documentList).map((documentId, idx) => {
+      let document = {}
       try {
-        const data = JSON.parse(documentList[s])
-        return <div key={idx} style={{ background: 'pink', margin: '5px 0' }}>
-          <div>DocumentId: {s}</div>
-          <div>DocumentType: {data.documentType}</div>
-          {Checkbox(this.isDocumentChosen(s), 'Chosen', () => this.handleCheckboxClick(s))}
-        </div>
+        document = JSON.parse(documentList[documentId])
       } catch (err) {
         return null
       }
-    })}
-    </div>
+      const documentType = document.documentType
+      const documentAction = <div>
+        {Checkbox(this.isDocumentChosen(documentId), 'Terpilih', () => this.handleCheckboxClick(documentId))}
+      </div>
+      return <Grid key={idx} item md={6} sm={12} xs={12}>
+        <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
+              description='{documentShortDescription}' documentType={documentType} actions={documentAction} />
+      </Grid>
+    }).filter(s => s)
+    if (cardElements.length === 0) {
+      return <Grid item md={12} sm={12} xs={12}><div style={{ textAlign: 'center' }}>
+        <h1 style={{ fontWeight: 500 }}>Dokumen Tidak Ditemukan.</h1>
+        </div></Grid>
+    }
+
+//     const data = JSON.parse(documentList[s])
+// -        return <div key={idx} style={{ background: 'pink', margin: '5px 0' }}>
+// -          <div>DocumentId: {s}</div>
+// -          <div>DocumentType: {data.documentType}</div>
+// -          
+// -        </div>
+    
+    return <Grid container spacing={3}>{ cardElements }</Grid>
   }
 
   isDocumentChosen = documentId => !!this.state.input.chosenDocuments.find(s => s === documentId)
