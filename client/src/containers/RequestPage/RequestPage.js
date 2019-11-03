@@ -47,7 +47,8 @@ class RequestPage extends ReactDrizzleComponent {
     _getRequesterAccountDataKey: null,
     _getAuthorizedDocumentDataKey: {},
 
-    _transactionStackId: null,
+    _requestingTxStackId: null,
+    _grantingTxStackId: null,
   }
   decipheredDocument = {}
 
@@ -56,6 +57,9 @@ class RequestPage extends ReactDrizzleComponent {
     this._drizzleStateDidUpdate(prevProps, '_getAccessRequestByRequesterListDataKey', 'AccessRequest', 'getAccessRequestByRequesterList', this.retrieveAccessRequestsByRequester)
     this._drizzleStateDidUpdate(prevProps, '_getOwnedDocumentListDataKey', 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
     this._drizzleStateDidUpdate(prevProps, '_getRequesterAccountDataKey', 'Account', 'account', this.proceedGrantDocument)
+
+    this._drizzleStateTxSuccess(prevProps, this.state._grantingTxStackId, this.handleGrantingComplete)
+    this._drizzleStateTxSuccess(prevProps, this.state._requestingTxStackId, this.handleRequestingComplete)
   }
 
   componentDidMount = () => {
@@ -151,8 +155,8 @@ class RequestPage extends ReactDrizzleComponent {
     const { drizzle, drizzleState } = this.props
     const ledger = new AccessRequestLedger(drizzle, drizzleState)
     const accountAddress = drizzleState.accounts[0]
-    const _transactionStackId = ledger.createAccessRequest(accountAddress, this.state.input.requestTo)
-    this.setState({ _transactionStackId })
+    const _requestingTxStackId = ledger.createAccessRequest(accountAddress, this.state.input.requestTo)
+    this.setState({ _requestingTxStackId })
   }
 
   retrieveAccessRequestByGranterList = () => {
@@ -390,9 +394,24 @@ class RequestPage extends ReactDrizzleComponent {
     
     const { drizzle, drizzleState } = this.props
     const ledger = new AccessRequestLedger(drizzle, drizzleState)
-    const _transactionStackId = ledger.authorizeDocument(input.chosenRequestEntry.id, input.chosenRequestEntry.requester, cipher,
+    const _grantingTxStackId = ledger.authorizeDocument(input.chosenRequestEntry.id, input.chosenRequestEntry.requester, cipher,
       documentList.length === 0 ? 'DECLINED' : 'COMPLETED')
-    this.setState({ _transactionStackId })
+    this.setState({ _grantingTxStackId })
+  }
+
+  handleGrantingComplete = () => {
+    window.SHOW_TOAST('Selamat! Pemberian akses telah berhasil dilakukan.')
+    this.props.history.push('/')
+  }
+
+  handleRequestingComplete = () => {
+    window.SHOW_TOAST(<div>
+      <div>Permohonan Akses telah berhasil dikirim.</div>
+      <div>Silakan cek secara berkala untuk mengetahui status permohonan Anda.</div>
+    </div>)
+    const newInput = { ...this.state.input }
+    newInput.requestTo = ''
+    this.setState({ input: newInput })
   }
 }
 
