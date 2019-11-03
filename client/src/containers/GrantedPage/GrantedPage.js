@@ -39,7 +39,9 @@ class GrantedPage extends ReactDrizzleComponent {
             <h1>Pengajuan Akses Terkabul (Granted)</h1>
             <div>Halaman ini digunakan untuk melihat isi dokumen yang telah diberikan kepada Anda.</div>
 
+            <div style={{ height: '2em' }}/>
             {TextField('Granted ID', this.state.input.grantedId, this.handleInputChange.bind(this, 'grantedId'))}
+            <div style={{ height: '1em' }}/>
             {Button('Cek', this.handleSubmitOnClick, 'primary', 'medium', !this.state.input.grantedId)}
 
             {Activity(this.state.showGrantedActivity, 'Granted ID #' + this.state.input.grantedId, resultSection, () => this.setState({ showGrantedActivity: false }) )}

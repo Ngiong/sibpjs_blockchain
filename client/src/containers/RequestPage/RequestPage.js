@@ -82,6 +82,7 @@ class RequestPage extends ReactDrizzleComponent {
       <h1>Pembuatan Permohonan Akses</h1>
       <div>Ajukan permohonan dokumen kepada pengguna lain pada halaman ini.</div>
 
+      <div style={{ height: '2em' }}/>
       {TextField('Tujuan Permohonan', input.requestTo, this.handleInputChange.bind(this, FIELD.REQUEST_TO))}
       <div style={{ height: '1em' }} />
       {Button('Kirim', this.handleCreateRequestSubmission, 'secondary', 'large', false, 'outlined')}
