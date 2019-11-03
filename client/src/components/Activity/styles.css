@@ -1,0 +1,9 @@
+.activity-container {
+    width: 600px;
+}
+
+@media (max-width: 600px) {
+    .activity-container {
+        width: 100vw;
+    }
+}

@@ -119,9 +119,9 @@ class RequestPage extends ReactDrizzleComponent {
 
     if (this.props.mode === 'GRANT')
       return <div className='animated zoomIn faster'>
+        {receivedRequestListSection}
         {Activity(this.state.selectDialogActivity, 'Pilih Dokumen', documentSelectionSection, () => this.setState({ selectDialogActivity: false }),
         { text: 'KIRIM', onClick: this.handleGrantButtonOnClick })}
-        {receivedRequestListSection}
       </div>
 
     if (this.props.mode === 'REQUEST')

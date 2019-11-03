@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { getRoutes } from './routes'
 
 import NavigationBar from '../containers/NavigationBar'
+import { createActivityComponent, showActivity } from '../components/Activity'
 
 import MomentUtils from '@date-io/moment'
 import { MuiThemeProvider } from '@material-ui/core'

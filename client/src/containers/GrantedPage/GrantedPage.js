@@ -2,7 +2,12 @@ import React from 'react'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import DocumentLedger from './ledger'
 import { decryptRSA } from './rsa'
+import {Grid} from '@material-ui/core'
 
+import documentNotFoundImg from './assets/document-not-found.png'
+
+import Activity from '../../components/Activity'
+import Card from '../../components/Card'
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
 import SelectField from '../../components/SelectField'
@@ -16,6 +21,7 @@ class GrantedPage extends ReactDrizzleComponent {
             grantedId: '',
             accountPrivateKey: '',
         },
+        showGrantedActivity: false,
         _getAuthorizedDocumentDataKey: null,
     }
 
@@ -26,13 +32,8 @@ class GrantedPage extends ReactDrizzleComponent {
     }
 
     render = () => {
-        const array = ['a', 'b']
         const authDocumentData = this.readAuthorizedDocument(this.state.input.accountPrivateKey)
-
-        const resultSection = array.length > 0 ? <div>
-            <h3>Rincian dokumen yang Anda terima:</h3>
-            <div>{JSON.stringify(authDocumentData)}</div>
-        </div> : null
+        const resultSection = this.renderResultSection(authDocumentData)
 
         return <div className='animated zoomIn faster'>
             <h1>Pengajuan Akses Terkabul (Granted)</h1>
@@ -41,7 +42,7 @@ class GrantedPage extends ReactDrizzleComponent {
             {TextField('Granted ID', this.state.input.grantedId, this.handleInputChange.bind(this, 'grantedId'))}
             {Button('Cek', this.handleSubmitOnClick, 'primary', 'medium', !this.state.input.grantedId)}
 
-            {resultSection}
+            {Activity(this.state.showGrantedActivity, 'Granted ID #' + this.state.input.grantedId, resultSection, () => this.setState({ showGrantedActivity: false }) )}
         </div>
     }
 
@@ -55,7 +56,7 @@ class GrantedPage extends ReactDrizzleComponent {
         const { drizzle, drizzleState } = this.props
         const ledger = new DocumentLedger(drizzle, drizzleState)
         const _getAuthorizedDocumentDataKey = ledger.getAuthorizedDocumentById(this.state.input.grantedId)
-        this.setState({ _getAuthorizedDocumentDataKey })
+        this.setState({ _getAuthorizedDocumentDataKey, showGrantedActivity: true })
     }
 
     readAuthorizedDocument = privateKey => {
@@ -69,6 +70,55 @@ class GrantedPage extends ReactDrizzleComponent {
             documentOwner: authDocumentData.documentOwner,
             documentDataList: decryptRSA(privateKey, authDocumentData.documentDataList)
         }
+    }
+
+    renderResultSection = authDocumentData => {
+        if (!authDocumentData) return null
+        if (authDocumentData.documentDataList === '') return <div style={{ textAlign: 'center', height: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <img src={documentNotFoundImg} style={{ width: '50%' }} />
+            <h1 style={{ fontWeight: 500 }}>Dokumen Tidak Ditemukan</h1>
+            <div style={{ fontSize: 18 }}>Pastikan Anda telah memasukkan Granted ID dengan benar.</div>
+        </div>
+        let documentList = []
+        try {
+            documentList = JSON.parse(authDocumentData.documentDataList)
+        } catch (err) {
+            return null
+        }
+
+        const cardElements = documentList.map((document, idx) => {
+            return <Grid key={idx} item md={6} sm={12} xs={12}>
+                <Card title='Nama RS/Company' documentId={document.documentId} date={document.documentCreatedAt}
+                    description={document.documentShortDescription} documentType={document.documentType} />
+            </Grid>
+        })
+        
+        return <div>
+            <h1>Rincian dokumen yang Anda terima:</h1>
+            <h2><div style={{ fontSize: 20, fontWeight: 500 }}>Pemilik Dokumen:</div> {authDocumentData.documentOwner}</h2>
+            <Grid container spacing={3}>{cardElements}</Grid>
+        </div>
+        // const cardElements = Object.keys(documentList).map((documentId, idx) => {
+        // let document = {}
+        // try {
+        //     document = JSON.parse(documentList[documentId])
+        // } catch (err) {
+        //     return null
+        // }
+        // if ((this.props.types || []).indexOf(document.documentType) === -1) return null
+        // return <Grid key={idx} item md={6} sm={12} xs={12}>
+        //     <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
+        //         description='{documentShortDescription}' documentType='{documentType}'></Card>
+        // </Grid>
+        // }).filter(s => s)
+        // if (cardElements.length === 0) {
+        // return <Grid item md={12} sm={12} xs={12}><div style={{ textAlign: 'center' }}>
+        //     <img src={documentNotFoundImg} style={{ width: '50%' }} />
+        //     <h1 style={{ fontWeight: 500 }}>Dokumen Tidak Ditemukan.</h1>
+        //     Anda belum pernah menerima dokumen dengan jenis ini.
+        //     </div></Grid>
+        // }
+        // return cardElements
     }
 
 }

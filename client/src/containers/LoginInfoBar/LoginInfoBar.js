@@ -42,12 +42,12 @@ class LoginInfoBar extends React.Component {
     </div> : null
 
     let sidebar = this.state.sidebarOpened ? <div>
+      <div className='login-info-bar-sidebar-overlay'
+         onClick={this.toggleSidebarOpen} />
       <div className='login-info-bar-sidebar animated slideInLeft faster'>
         { profile }
         { navigation }
       </div>
-      <div className='login-info-bar-sidebar-overlay'
-           onClick={this.toggleSidebarOpen} />
     </div> : null
 
     return <div className='login-info-bar'>
