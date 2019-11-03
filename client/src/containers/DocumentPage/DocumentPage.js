@@ -160,7 +160,9 @@ class DocumentPage extends ReactDrizzleComponent {
         {Checkbox(input.accountAcceptAgreement, <span style={{ fontSize: 18 }}>
           Saya telah membaca ulang untuk memastikan bahwa informasi yang saya masukkan adalah BENAR.
         </span>, this.handleInputChange.bind(this, FIELD.DOCUMENT_ACCEPT_AGREEMENT), 'primary')}
-        {Button('Simpan', this.handleSubmitButtonClick, 'primary')}
+        <div style={{ height: '2em' }}/>
+        {Button('Simpan', this.handleSubmitButtonClick, 'primary', 'large')}
+        <div style={{ height: '2em' }}/>
       </div>
     </div>
 

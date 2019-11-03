@@ -160,7 +160,9 @@ class AccountPage extends ReactDrizzleComponent {
           {Checkbox(input.accountAcceptAgreement, <span style={{ fontSize: 14 }}>
             Saya setuju dengan syarat dan ketentuan yang berlaku pada aplikasi SiBPJS.
           </span>, this.handleInputChange.bind(this, FIELD.ACCOUNT_ACCEPT_AGREEMENT), 'primary')}
-          {Button('Simpan', this.handleSubmitButtonClick, 'primary', 'small', !this.completedForm())}
+          <div style={{ height: '2em' }}/>
+          {Button('Simpan', this.handleSubmitButtonClick, 'primary', 'large', !this.completedForm())}
+          <div style={{ height: '2em' }}/>
         </div>
       </div>
     </div>
