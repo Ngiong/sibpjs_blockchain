@@ -15,13 +15,18 @@ class DocumentLedger {
     return _getAccountDataKey
   }
 
-  createDocument = (recipient, input) => {
+  createDocument = (recipient, input, issuer) => {
     const recipientAddress = input.documentRecipient
     const documentData = { ...input }
     delete documentData.accountPrivateKey
-    const cipher = encryptRSA(recipient.accountPublicKey, JSON.stringify(documentData))
 
     const issuerAddress = drizzleState.accounts[0]
+    documentData.documentAuthorName = issuer.accountName
+    documentData.documentAuthorAddress = issuerAddress
+
+    console.log('DocumentData', documentData)
+
+    const cipher = encryptRSA(recipient.accountPublicKey, JSON.stringify(documentData))
     this.submitDocumentContract(recipientAddress, issuerAddress, input.documentType, cipher, '_signature')
   }
 

@@ -45,7 +45,7 @@ const FIELD = {
   ACCOUNT_PRIVATE_KEY: 'accountPrivateKey',
 }
 
-const COMMON_FIELDS = [FIELD.DOCUMENT_TYPE,FIELD.DOCUMENT_NUMBER,FIELD.DOCUMENT_RECIPIENT,FIELD.DOCUMENT_SHORT_DESCRIPTION, FIELD.DOCUMENT_CREATED_AT]
+const COMMON_FIELDS = [FIELD.DOCUMENT_TYPE,FIELD.DOCUMENT_NUMBER,FIELD.DOCUMENT_RECIPIENT,FIELD.DOCUMENT_SHORT_DESCRIPTION, FIELD.DOCUMENT_CREATED_AT, FIELD.DOCUMENT_ADDITIONAL_DESCRIPTION]
 const MEDICAL_FIELDS = [...COMMON_FIELDS, FIELD.MEDICAL_SYMPTOMS, FIELD.MEDICAL_DIAGNOSIS, FIELD.MEDICAL_DOCTOR, FIELD.MEDICAL_TREATMENT, FIELD.MEDICAL_PRESCRIPTION]
 const CLAIM_FIELDS = [...COMMON_FIELDS, FIELD.CLAIM_HEALTH_PROVIDER_NAME, FIELD.CLAIM_VISIT_DATE, FIELD.CLAIM_DIAGNOSIS, FIELD.CLAIM_AMOUNT]
 const POLICY_FIELDS = [...COMMON_FIELDS, FIELD.POLICY_CLIENT_NAME, FIELD.POLICY_ALLOWED_PROVIDERS, FIELD.POLICY_ALLOWED_TREAMENTS, FIELD.POLICY_TNC, FIELD.POLICY_MAX_CLAIMS]
@@ -87,6 +87,7 @@ class DocumentPage extends ReactDrizzleComponent {
       accountPrivateKey: '',
     },
     _getDocumentRecipientDataKey: null,
+    _getDocumentIssuerDataKey: null,
     _getOwnedDocumentListDataKey: null,
     _getDocumentDataKey: {},
     _transactionStackId: null,
@@ -94,6 +95,7 @@ class DocumentPage extends ReactDrizzleComponent {
 
   componentDidUpdate = prevProps => {
     this._drizzleStateDidUpdate(prevProps, '_getDocumentRecipientDataKey', 'Account', 'account', this.proceedCreateDocument)
+    this._drizzleStateDidUpdate(prevProps, '_getDocumentIssuerDataKey', 'Account', 'account', this.proceedCreateDocument)
     this._drizzleStateDidUpdate(prevProps, '_getOwnedDocumentListDataKey', 'Document', 'getOwnedDocumentList', this.retrieveDocuments)
   }
 
@@ -204,9 +206,16 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   handleSubmitButtonClick = () => {
-    const _getDocumentRecipientDataKey = this.retrieveDocumentRecipient(this.state.input.documentRecipient)
-    this._drizzleStateIfExist(_getDocumentRecipientDataKey, 'Account', 'account', this.proceedCreateDocument)
-    this.setState({ _getDocumentRecipientDataKey })
+    this.setState({ _getDocumentRecipientDataKey: null, _getDocumentIssuerDataKey: null }, () => {
+      const _getDocumentRecipientDataKey = this.retrieveDocumentRecipient(this.state.input.documentRecipient)
+      const _getDocumentIssuerDataKey = this.retrieveDocumentIssuer()
+      this.setState({ _getDocumentRecipientDataKey, _getDocumentIssuerDataKey }, () => {
+        // this might be confusing, ceritanya proceedCreateDocument nya ngeliat dari this.state, shg harus setState dulu.
+        const getResult = x => this.props.drizzleState.contracts.Account.account[x]
+        if (getResult(_getDocumentRecipientDataKey) && getResult(_getDocumentIssuerDataKey)) this.proceedCreateDocument()
+      })
+    })
+    
   }
 
   retrieveDocumentRecipient = address => {
@@ -215,17 +224,34 @@ class DocumentPage extends ReactDrizzleComponent {
     return ledger.getDocumentRecipientAccountInfo(address)
   }
 
+  retrieveDocumentIssuer = () => {
+    const { drizzle, drizzleState } = this.props
+    const accountAddress = drizzleState.accounts[0]
+    const ledger = new DocumentLedger(drizzle, drizzleState)
+    return ledger.getDocumentRecipientAccountInfo(accountAddress)
+  }
+
   extractDocumentObject = () => {
     const fields = this.state.input.documentType === 'MEDICAL_RECORD' ? MEDICAL_FIELDS
       : this.state.input.documentType === 'INSURANCE_CLAIM' ? CLAIM_FIELDS : POLICY_FIELDS
     return fields.reduce((dict, fieldName) => ({ ...dict, [fieldName]: this.state.input[fieldName] }), {})
   }
 
-  proceedCreateDocument = recipientAccountData => {
+  proceedCreateDocument = () => {
     const { drizzle, drizzleState } = this.props
+    const getResult = x => drizzleState.contracts.Account.account[x]
+    const { _getDocumentIssuerDataKey, _getDocumentRecipientDataKey } = this.state
+    if (!getResult(_getDocumentIssuerDataKey) || !getResult(_getDocumentRecipientDataKey)) return
+
     const ledger = new DocumentLedger(drizzle, drizzleState)
+    const _recipient = drizzleState.contracts.Account.account[this.state._getDocumentRecipientDataKey]
+    const recipientAccountData = _recipient && _recipient.value
+
+    const _issuer = drizzleState.contracts.Account.account[this.state._getDocumentIssuerDataKey]
+    const issuerAccountData = _issuer && _issuer.value
+
     const extractedObject = this.extractDocumentObject()
-    const _transactionStackId = ledger.createDocument(recipientAccountData, extractedObject)
+    const _transactionStackId = ledger.createDocument(recipientAccountData, extractedObject, issuerAccountData)
     this.setState({ _transactionStackId })
   }
 
