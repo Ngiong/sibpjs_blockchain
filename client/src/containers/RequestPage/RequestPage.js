@@ -260,7 +260,7 @@ class RequestPage extends ReactDrizzleComponent {
     const emptyList = content.filter(s => s).length === 0
 
     return <div className='request-page-list'>
-      { emptyList ? 'Anda belum pernah membuat pengajuan akses kepada siapapun.' : content }
+      { emptyList ? 'Anda belum pernah membuat pengajuan akses kepada siapapun.' : content.reverse() }
     </div>
   }
 

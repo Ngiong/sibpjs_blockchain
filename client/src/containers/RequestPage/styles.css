@@ -9,6 +9,8 @@
   -webkit-box-shadow: 6px -1px 17px 0px rgba(0,0,0,0.33);
   -moz-box-shadow: 6px -1px 17px 0px rgba(0,0,0,0.33);
   box-shadow: 6px -1px 17px 0px rgba(0,0,0,0.33);
+  position: relative;
+  margin-bottom: 35px;
 }
 
 .request-page-list-item:after {

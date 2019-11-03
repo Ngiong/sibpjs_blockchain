@@ -250,7 +250,7 @@ class DocumentPage extends ReactDrizzleComponent {
       } catch (err) {
         return null
       }
-      if (this.props.types.indexOf(document.documentType) === -1) return null
+      if ((this.props.types || []).indexOf(document.documentType) === -1) return null
       return <Grid key={idx} item md={6} sm={12} xs={12}>
         <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
               description='{documentShortDescription}' documentType='{documentType}'></Card>
