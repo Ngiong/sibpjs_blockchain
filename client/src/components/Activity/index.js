@@ -20,7 +20,10 @@ const createActivityComponent = (showed, title, content, onBack, rightAction) =>
     const contentStyle = {
         width: '100%',
         padding: '64px 20px 0px',
-        background: 'white'
+        background: 'white',
+        display: 'flex',
+        overflowY: 'auto',
+        marginBottom: 100,
     }
 
     return <div style={wrapperStyle}>

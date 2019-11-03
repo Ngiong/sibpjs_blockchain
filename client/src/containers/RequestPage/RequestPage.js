@@ -109,10 +109,10 @@ class RequestPage extends ReactDrizzleComponent {
     const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
     const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
-    const documentSelectionSection = <div>
+    const documentSelectionSection = <div style={{ width: '100%' }}>
       <h1>Pemberian Akses #{this.state.input.chosenRequestEntry.id}</h1>
-      <h3><span style={{ fontWeight: 500, color: 'black' }}>Kepada:</span>
-      <span style={{ fontSize: '1.1em'}}> {this.state.input.chosenRequestEntry.granter}</span></h3>
+      <h3><div style={{ fontWeight: 500, color: 'black' }}>Kepada:</div>
+      <div style={{ fontSize: '1.1em', overflowY: 'hidden', textOverflow: 'ellipsis'}}> {this.state.input.chosenRequestEntry.granter}</div></h3>
       { rOwnedDocumentList }
       {/* <div>{Button('Kirim', this.handleGrantButtonOnClick, 'secondary', 'small', this.shouldDisableGrantButton())}</div> */}
     </div>
@@ -247,7 +247,7 @@ class RequestPage extends ReactDrizzleComponent {
 
       return <div key={'access-request-id-' + requestId} className={className}>
         <img src={icon} style={{ height: 50 }} />
-        <div style={{ maxWidth: 340 }}>
+        <div style={{ maxWidth: '70%' }}>
           <div>ID Request: #{data.id}</div>
           <div style={{ fontSize: '1.2em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.granter}</div>
           <div>Status Permohonan: <span style={{ fontSize: '1.1em', fontWeight: '600' }}>{data.status}</span></div>
@@ -274,7 +274,7 @@ class RequestPage extends ReactDrizzleComponent {
 
       return <div key={'access-request-id-' + requestId} className={className}>
         <img src={accountIcon} style={{ height: 50 }} />
-        <div style={{ maxWidth: 340 }}>
+        <div style={{ maxWidth: '70%' }}>
           <div>ID Request: #{data.id}</div>
           <div className='request-page-list-item-name'>{data.requester}</div>
           <div>{Button('Pilih', () => onSelect(data), 'primary', 'small', false, 'text')}</div>
