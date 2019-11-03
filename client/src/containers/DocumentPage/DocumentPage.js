@@ -263,7 +263,7 @@ class DocumentPage extends ReactDrizzleComponent {
         Anda belum pernah menerima dokumen dengan jenis ini.
         </div></Grid>
     }
-    return cardElements
+    return cardElements.reverse()
   }
 
   retrieveDocuments = documentIds => {

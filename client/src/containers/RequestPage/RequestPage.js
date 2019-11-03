@@ -288,7 +288,7 @@ class RequestPage extends ReactDrizzleComponent {
       { emptyList ? <div style={{ textAlign: 'center'}}>
         <img src={noRequestImg} style={{ width: '50%' }} />
         <h1 style={{ fontWeight: 500 }}>Permintaan Akses <br/> Tidak Ditemukan</h1>
-      </div> : content }
+      </div> : content.reverse() }
     </div>
   }
 
