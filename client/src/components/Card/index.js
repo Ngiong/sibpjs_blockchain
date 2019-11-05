@@ -10,7 +10,7 @@ class SimpleCard extends React.Component{
   render(){
     const type = this.props.documentType === 'MEDICAL_RECORD' ? 'Rekam Medis'
       : this.props.documentType === 'INSURANCE_CLAIM' ? 'Klaim Asuransi' : 'Polis Asuransi'
-    const actions = this.props.actions || <Button size="small" fullWidth>View</Button>
+    const actions = this.props.actions || <Button size="small" fullWidth onClick = { this.props.handleOnClick }>View</Button>
     return (
       // <Card onMouseOver={true} 
       // onMouseOut={true} 

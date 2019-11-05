@@ -16,6 +16,10 @@ import SelectField from '../../components/SelectField'
 import Label from '../../components/Label'
 import Button from '../../components/Button'
 import Checkbox from '../../components/Checkbox'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
 
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
@@ -92,6 +96,7 @@ class DocumentPage extends ReactDrizzleComponent {
     _getOwnedDocumentListDataKey: null,
     _getDocumentDataKey: {},
     _transactionStackId: null,
+    selectedDocumentToView: null
   }
 
   componentDidUpdate = prevProps => {
@@ -174,6 +179,7 @@ class DocumentPage extends ReactDrizzleComponent {
     const ownedDocumentList = this.readOwnedDocumentList()
     const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
     const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+    const rViewDocument = this.renderViewDocument()
 
     const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
       <img src={notFoundImg} style={{ width: '50%' }} />
@@ -194,7 +200,12 @@ class DocumentPage extends ReactDrizzleComponent {
       <h1>Document #[documentId]</h1>
     </div>
 
+    const dialogSection = <div>
+      { rViewDocument }
+    </div>
+
     return <div className='animated zoomIn faster'>
+      { dialogSection }
       {/* {createSection}{listSection}{viewSection} */}
       {this.props.mode === 'CREATE' && createSection}
       {this.props.mode === 'LIST' && listSection}
@@ -325,6 +336,33 @@ class DocumentPage extends ReactDrizzleComponent {
   handleCompleteCreateDocument = () => {
     window.SHOW_TOAST('Selamat! Dokumen Anda telah berhasil diterbitkan.')
     this.props.history.push('/')
+  }
+
+  renderViewDocument = () => {
+    const { selectedDocumentToView } = this.state
+    if(selectedDocumentToView != null) {
+      return <Dialog open={this.props.visible} aria-labelledby="form-dialog-title">
+        {/* <DialogTitle>Manual Input Private Key</DialogTitle> */}
+        <DialogContent>
+          <DialogContentText><span className='account-page-section-private-key-dialog'>
+            Silakan memasukkan RSA Private Key yang sudah Anda simpan sebelumnya.
+          </span></DialogContentText>
+          <TextField error={this.state.error} autoFocus margin="dense" label='RSA Private Key' fullWidth multiline
+                    onChange={this.handleChange} value={this.state.value} 
+                    InputProps={{ style: { fontSize: 12, fontFamily: 'monospace' } }}/>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">Batal</Button>
+          <Button onClick={this.handleSubmit} color="primary">Simpan</Button>
+        </DialogActions>
+      </Dialog>
+    } else {
+      return <div></div>
+    }
+  }
+
+  handleCardOnClick = documentId => {
+
   }
 }
 
