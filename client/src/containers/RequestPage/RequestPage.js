@@ -6,6 +6,7 @@ import { encryptRSA, decryptRSA } from './rsa'
 
 import {Grid} from '@material-ui/core'
 
+import AccountSearch from '../../components/AccountSearch'
 import Card from '../../components/Card'
 import Activity from '../../components/Activity'
 import TextField from '../../components/TextField'
@@ -88,7 +89,7 @@ class RequestPage extends ReactDrizzleComponent {
       <div>Ajukan permohonan dokumen kepada pengguna lain pada halaman ini.</div>
 
       <div style={{ height: '2em' }}/>
-      {TextField('Tujuan Permohonan', input.requestTo, this.handleInputChange.bind(this, FIELD.REQUEST_TO))}
+      <AccountSearch label='Tujuan Permohonan' onChange={this.handleInputChange.bind(this, FIELD.REQUEST_TO)} />
       <div style={{ height: '1em' }} />
       {Button('Kirim', this.handleCreateRequestSubmission, 'secondary', 'large', false, 'outlined')}
 
