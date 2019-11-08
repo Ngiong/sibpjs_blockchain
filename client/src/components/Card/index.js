@@ -10,14 +10,14 @@ class SimpleCard extends React.Component{
   render(){
     const type = this.props.documentType === 'MEDICAL_RECORD' ? 'Rekam Medis'
       : this.props.documentType === 'INSURANCE_CLAIM' ? 'Klaim Asuransi' : 'Polis Asuransi'
-    const actions = this.props.actions || <Button size="small" fullWidth onClick = { this.props.handleOnClick }>View</Button>
+    const actions = this.props.actions || <Button size="small" fullWidth onClick = { this.props.handleOnClick.bind(this, this.props.documentId) }>View</Button>
     return (
       // <Card onMouseOver={true} 
       // onMouseOut={true} 
       <Card raised={true}>
         <CardContent>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <div style={{ fontSize: 24 }}>#{this.props.id}</div>
+            <div style={{ fontSize: 24 }}>#{this.props.documentId}</div>
             <div style={{ fontSize: 12 }}>{this.props.date}</div>
           </div>
           <Typography color='primary'>

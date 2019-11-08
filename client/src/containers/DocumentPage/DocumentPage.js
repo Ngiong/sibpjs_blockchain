@@ -63,6 +63,11 @@ const DOCUMENT_TYPE_HEALTH = {
 }
 
 class DocumentPage extends ReactDrizzleComponent {
+  constructor() {
+    super()
+    this.handleCardOnClick = this.handleCardOnClick.bind(this)
+  }
+
   state = {
     input: {
       documentType: 'MEDICAL_RECORD',
@@ -97,7 +102,8 @@ class DocumentPage extends ReactDrizzleComponent {
     _getOwnedDocumentListDataKey: null,
     _getDocumentDataKey: {},
     _transactionStackId: null,
-    selectedDocumentToView: null
+    selectedDocumentToView: null,
+    showViewDialog: false
   }
 
   componentDidUpdate = prevProps => {
@@ -177,9 +183,58 @@ class DocumentPage extends ReactDrizzleComponent {
       </div>
     </div>
 
+    const mockOwnedDocumentList = {"id-1": JSON.stringify({
+      "documentId": "id-1",
+      "documentType": "MEDICAL_RECORD",
+      "documentNumber": "abc",
+      "documentRecipient": "",
+      "documentShortDescription": "12121",
+      "documentCreatedAt": "2019-11-04",
+      "documentAdditionalDescription": "",
+      "medicalSymptoms": "abc",
+      "medicalDiagnosis": "diag",
+      "medicalDoctor": "dokter",
+      "medicalTreatment": "penanganan",
+      "medicalPrescription": "resep",
+      "documentAuthorName": "RS Holland",
+      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
+    }),
+    "id-2": JSON.stringify({
+      "documentId": "id-2",
+      "documentType": "INSURANCE_CLAIM",
+      "documentNumber": "abc",
+      "documentRecipient": "",
+      "documentShortDescription": "def",
+      "documentCreatedAt": "2019-11-15",
+      "documentAdditionalDescription": "",
+      "claimHealthProviderName": "informasi",
+      "claimVisitDate": "2019-11-05",
+      "claimDiagnosis": "diagnosis",
+      "claimAmount": "20000",
+      "documentAuthorName": "RS Holland",
+      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
+    }),
+    "id-3": JSON.stringify({
+      "documentId": "id-3",
+      "documentType": "INSURANCE_POLICY",
+      "documentNumber": "12121",
+      "documentRecipient": "",
+      "documentShortDescription": "ini dokumen",
+      "documentCreatedAt": "2019-11-16",
+      "documentAdditionalDescription": "",
+      "policyClientName": "abc",
+      "policyAllowedProviders": "partner",
+      "policyAllowedTreatments": "semua",
+      "policyTnC": "akwkasa",
+      "policyMaxClaims": "3001201021021",
+      "documentAuthorName": "RS Holland",
+      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
+    })}
+
     const ownedDocumentList = this.readOwnedDocumentList()
     const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
-    const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+    // const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+    const rOwnedDocumentList = this.renderOwnedDocumentList(mockOwnedDocumentList)
     const rViewDocument = this.renderViewDocument()
 
     const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
@@ -285,18 +340,22 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   renderOwnedDocumentList = documentList => {
+    console.log('document list', documentList)
     if (!documentList) return null
     const cardElements = Object.keys(documentList).map((documentId, idx) => {
+      console.log('loop', documentId, idx)
       let document = {}
       try {
+        console.log('document', document)
         document = JSON.parse(documentList[documentId])
       } catch (err) {
         return null
       }
       if ((this.props.types || []).indexOf(document.documentType) === -1) return null
       return <Grid key={idx} item md={6} sm={12} xs={12}>
-        <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
-              description='{documentShortDescription}' documentType='{documentType}'></Card>
+        <Card title='Nama RS/Company' documentId={document.documentId} date={document.documentCreatedAt}
+              description={document.documentShortDescription} documentType={document.documentType}
+              handleOnClick = { this.handleCardOnClick }></Card>
       </Grid>
     }).filter(s => s)
     if (cardElements.length === 0) {
@@ -340,9 +399,9 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   renderViewDocument = () => {
-    const { selectedDocumentToView } = this.state
+    const { showViewDialog, selectedDocumentToView } = this.state
     if(selectedDocumentToView != null) {
-      return <Dialog open={this.props.visible} aria-labelledby="form-dialog-title">
+      return <Dialog open={this.props.showViewDialog} aria-labelledby="form-dialog-title">
         {/* <DialogTitle>Manual Input Private Key</DialogTitle> */}
         <DialogContent>
           <DialogContentText><span className='account-page-section-private-key-dialog'>
@@ -362,8 +421,84 @@ class DocumentPage extends ReactDrizzleComponent {
     }
   }
 
-  handleCardOnClick = documentId => {
+  toggleShowDialog = () => {
+    this.setState({
+      showViewDialog: !this.state.showViewDialog
+    })
+  }
 
+  handleCardOnClick = documentId => {
+    console.log('documentIdabcdef', documentId)
+    const { input } = this.state
+
+    const mockOwnedDocumentList = {"id-1": JSON.stringify({
+      "documentId": "id-1",
+      "documentType": "MEDICAL_RECORD",
+      "documentNumber": "abc",
+      "documentRecipient": "",
+      "documentShortDescription": "12121",
+      "documentCreatedAt": "2019-11-04",
+      "documentAdditionalDescription": "",
+      "medicalSymptoms": "abc",
+      "medicalDiagnosis": "diag",
+      "medicalDoctor": "dokter",
+      "medicalTreatment": "penanganan",
+      "medicalPrescription": "resep",
+      "documentAuthorName": "RS Holland",
+      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
+    }),
+    "id-2": JSON.stringify({
+      "documentId": "id-2",
+      "documentType": "INSURANCE_CLAIM",
+      "documentNumber": "abc",
+      "documentRecipient": "",
+      "documentShortDescription": "def",
+      "documentCreatedAt": "2019-11-15",
+      "documentAdditionalDescription": "",
+      "claimHealthProviderName": "informasi",
+      "claimVisitDate": "2019-11-05",
+      "claimDiagnosis": "diagnosis",
+      "claimAmount": "20000",
+      "documentAuthorName": "RS Holland",
+      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
+    }),
+    "id-3": JSON.stringify({
+      "documentId": "id-3",
+      "documentType": "INSURANCE_POLICY",
+      "documentNumber": "12121",
+      "documentRecipient": "",
+      "documentShortDescription": "ini dokumen",
+      "documentCreatedAt": "2019-11-16",
+      "documentAdditionalDescription": "",
+      "policyClientName": "abc",
+      "policyAllowedProviders": "partner",
+      "policyAllowedTreatments": "semua",
+      "policyTnC": "akwkasa",
+      "policyMaxClaims": "3001201021021",
+      "documentAuthorName": "RS Holland",
+      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
+    })}
+
+    const ownedDocumentList = this.readOwnedDocumentList()
+    // const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
+    const decipheredDocumentList = mockOwnedDocumentList
+    Object.keys(decipheredDocumentList).map((docId, idx) => {
+      console.log('loop', documentId, idx)
+      if(docId == documentId) {
+        let document = {}
+        try {
+          console.log('document', document)
+          document = JSON.parse(decipheredDocumentList[documentId])
+        } catch (err) {
+          return null
+        }
+
+        this.setState({
+          showViewDialog: true,
+          selectedDocumentToView: document
+        })
+      }
+    })
   }
 }
 
