@@ -9,6 +9,7 @@ import './styles.css'
 import notFoundImg from './assets/not-found.png'
 import documentNotFoundImg from './assets/document-not-found.png'
 
+import AccountSearch from '../../components/AccountSearch'
 import Card from '../../components/Card'
 import TextField from '../../components/TextField'
 import DateField from '../../components/DateField'
@@ -150,7 +151,7 @@ class DocumentPage extends ReactDrizzleComponent {
 
     const createSection = <div>
       <h1>Penerbitan Dokumen Baru</h1>
-      {TextField('Kepada', input.documentRecipient, this.handleInputChange.bind(this, FIELD.DOCUMENT_RECIPIENT))}
+      <AccountSearch label='Kepada' onChange={this.handleInputChange.bind(this, FIELD.DOCUMENT_RECIPIENT)} />
 
       <div className='account-page-section-title'>Informasi Umum</div>
 

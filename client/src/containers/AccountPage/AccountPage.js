@@ -2,6 +2,7 @@ import React from 'react'
 import { withRouter } from 'react-router-dom'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import { generateRSAKeyPair } from './rsa'
+import { storeToES } from './es'
 import AccountLedger from './ledger'
 import './styles.css'
 
@@ -228,6 +229,13 @@ class AccountPage extends ReactDrizzleComponent {
   }
 
   handleCompletedForm = () => {
+    if (this.state.input.accountType === 'REGULAR') {
+      const accountAddress = this.props.drizzleState.accounts[0]
+      storeToES(accountAddress, this.state.input.accountName, this.state.input.accountBPJS)
+        .then(result => console.log('RESULT', result))
+        .catch(err => console.error('ERROR', err))
+    }
+
     this.handleStorePrivateKey(this.state.input.accountPrivateKey)
     window.SHOW_TOAST('Data profil berhasil disimpan.')
     this.props.history.push('/')
