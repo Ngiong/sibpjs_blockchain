@@ -17,6 +17,17 @@ import SelectField from '../../components/SelectField'
 import Label from '../../components/Label'
 import Button from '../../components/Button'
 import Checkbox from '../../components/Checkbox'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import MaterialTextField from '@material-ui/core/TextField'
+import { DatePicker } from '@material-ui/pickers'
+
+import InsuranceClaimView from './InsuranceClaimView'
+import MedicalRecordView from './MedicalRecordView'
+import InsurancePolicyView from './InsurancePolicyView'
 
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
@@ -59,6 +70,11 @@ const DOCUMENT_TYPE_HEALTH = {
 }
 
 class DocumentPage extends ReactDrizzleComponent {
+  constructor() {
+    super()
+    this.handleCardOnClick = this.handleCardOnClick.bind(this)
+  }
+
   state = {
     input: {
       documentType: 'MEDICAL_RECORD',
@@ -93,6 +109,8 @@ class DocumentPage extends ReactDrizzleComponent {
     _getOwnedDocumentListDataKey: null,
     _getDocumentDataKey: {},
     _transactionStackId: null,
+    selectedDocumentToView: null,
+    showViewDialog: false
   }
 
   componentDidUpdate = prevProps => {
@@ -175,6 +193,7 @@ class DocumentPage extends ReactDrizzleComponent {
     const ownedDocumentList = this.readOwnedDocumentList()
     const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
     const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
+    const rViewDocument = this.renderViewDocument()
 
     const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
       <img src={notFoundImg} style={{ width: '50%' }} />
@@ -195,7 +214,12 @@ class DocumentPage extends ReactDrizzleComponent {
       <h1>Document #[documentId]</h1>
     </div>
 
+    const dialogSection = <div>
+      { rViewDocument }
+    </div>
+
     return <div className='animated zoomIn faster'>
+      { dialogSection }
       {/* {createSection}{listSection}{viewSection} */}
       {this.props.mode === 'CREATE' && createSection}
       {this.props.mode === 'LIST' && listSection}
@@ -274,18 +298,22 @@ class DocumentPage extends ReactDrizzleComponent {
   }
 
   renderOwnedDocumentList = documentList => {
+    console.log('document list', documentList)
     if (!documentList) return null
     const cardElements = Object.keys(documentList).map((documentId, idx) => {
+      console.log('loop', documentId, idx)
       let document = {}
       try {
+        console.log('document', document)
         document = JSON.parse(documentList[documentId])
       } catch (err) {
         return null
       }
       if ((this.props.types || []).indexOf(document.documentType) === -1) return null
       return <Grid key={idx} item md={6} sm={12} xs={12}>
-        <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
-              description='{documentShortDescription}' documentType='{documentType}'></Card>
+        <Card title='Nama RS/Company' documentId={document.documentId} date={document.documentCreatedAt}
+              description={document.documentShortDescription} documentType={document.documentType}
+              handleOnClick = { this.handleCardOnClick }></Card>
       </Grid>
     }).filter(s => s)
     if (cardElements.length === 0) {
@@ -326,6 +354,96 @@ class DocumentPage extends ReactDrizzleComponent {
   handleCompleteCreateDocument = () => {
     window.SHOW_TOAST('Selamat! Dokumen Anda telah berhasil diterbitkan.')
     this.props.history.push('/')
+  }
+
+  renderViewDocument = () => {
+    const { showViewDialog, selectedDocumentToView } = this.state
+    if(selectedDocumentToView != null) {
+      console.log('selectedDocumentToView', selectedDocumentToView)
+      const documentType = selectedDocumentToView.documentType
+      let detailFields = (<div></div>)
+
+      if(documentType == 'MEDICAL_RECORD') {
+        detailFields = (
+          <MedicalRecordView 
+            data = { selectedDocumentToView }
+          />
+        )
+      } else if(documentType == 'INSURANCE_CLAIM') {
+        detailFields = (
+          <InsuranceClaimView 
+            data = { selectedDocumentToView }
+          />
+        )
+      } else if(documentType == 'INSURANCE_POLICY') {
+        detailFields = (
+          <InsurancePolicyView
+            data = { selectedDocumentToView }
+          />
+        )
+      }
+      return <Dialog open={showViewDialog} aria-labelledby="form-dialog-title">
+        <DialogTitle>{  }</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {selectedDocumentToView.documentId} - {selectedDocumentToView.documentNumber}
+          </DialogContentText>
+
+          <MaterialTextField 
+            label="Description"
+            value= {selectedDocumentToView.documentShortDescription}
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+
+          <DatePicker margin="normal" 
+            label="Created At" 
+            value= {selectedDocumentToView.createdAt} 
+            format='MMMM Do YYYY' 
+            InputProps={{
+              readOnly: true,
+            }} />
+          
+          { detailFields }
+
+
+        </DialogContent>
+      </Dialog>
+    } else {
+      return <div></div>
+    }
+  }
+
+  toggleShowDialog = () => {
+    this.setState({
+      showViewDialog: !this.state.showViewDialog
+    })
+  }
+
+  handleCardOnClick = documentId => {
+    console.log('documentIdabcdef', documentId)
+    const { input } = this.state
+    const ownedDocumentList = this.readOwnedDocumentList()
+    const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
+    Object.keys(decipheredDocumentList).map((docId, idx) => {
+      console.log('loop', documentId, idx)
+      if(docId == documentId) {
+        let document = {}
+        try {
+          console.log('document', document)
+          document = JSON.parse(decipheredDocumentList[documentId])
+        } catch (err) {
+          return null
+        }
+
+        this.setState({
+          showViewDialog: true,
+          selectedDocumentToView: document
+        })
+      }
+    })
   }
 }
 
