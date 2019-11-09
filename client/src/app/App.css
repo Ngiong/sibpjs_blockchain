@@ -20,3 +20,25 @@
 .App-link {
   color: #09d3ac;
 }
+
+.splash {
+  position: fixed;
+  top: 0; bottom: 0;
+  z-index: 200;
+  width: 600px;
+  background: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .splash {
+    width: 100vw;
+  }
+}
+
+.displayNone {
+  display: none;
+}

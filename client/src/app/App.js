@@ -14,6 +14,8 @@ import { createMuiTheme } from '@material-ui/core/styles'
 import './App.css'
 
 import Toast from '../components/Toast'
+import sibpjsWhite from './assets/sibpjs.png'
+import loading from './assets/loading.gif'
 
 const muiTheme = createMuiTheme({
   typography: {
@@ -48,6 +50,14 @@ class App extends React.Component {
     window.SHOW_TOAST = message => {
       this.setState({ toastVisible: true, toastMessage: message })
     }
+
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('animated', 'bounceOut')
+    }, 2000)
+
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('displayNone')
+    }, 3000)
   }
 
   componentWillUnmount = () => this.unsubscribe()
@@ -69,6 +79,10 @@ class App extends React.Component {
             <LoginInfoBar {...drizzleProps} />
             <NavigationBar {...drizzleProps} />
             <div style={{ maxWidth: 500, padding: '64px 20px 100px 20px', margin: 'auto' }}>{routes}</div>
+            <div className='splash' id='splash'>
+              <img src={sibpjsWhite} style={{ width: '45%' }}/>
+              <img src={loading} style={{ width: '40%', position: 'absolute', bottom: '1em' }} />
+            </div>
           </Router>
         </MuiPickersUtilsProvider>
       </MuiThemeProvider>
