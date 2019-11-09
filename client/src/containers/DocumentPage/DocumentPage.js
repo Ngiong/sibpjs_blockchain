@@ -25,6 +25,10 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import MaterialTextField from '@material-ui/core/TextField'
 import { DatePicker } from '@material-ui/pickers'
 
+import InsuranceClaimView from './InsuranceClaimView'
+import MedicalRecordView from './MedicalRecordView'
+import InsurancePolicyView from './InsurancePolicyView'
+
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
   DOCUMENT_NUMBER: 'documentNumber', 
@@ -405,6 +409,28 @@ class DocumentPage extends ReactDrizzleComponent {
     const { showViewDialog, selectedDocumentToView } = this.state
     if(selectedDocumentToView != null) {
       console.log('selectedDocumentToView', selectedDocumentToView)
+      const documentType = selectedDocumentToView.documentType
+      let detailFields = (<div></div>)
+
+      if(documentType == 'MEDICAL_RECORD') {
+        detailFields = (
+          <MedicalRecordView 
+            data = { selectedDocumentToView }
+          />
+        )
+      } else if(documentType == 'INSURANCE_CLAIM') {
+        detailFields = (
+          <InsuranceClaimView 
+            data = { selectedDocumentToView }
+          />
+        )
+      } else if(documentType == 'INSURANCE_POLICY') {
+        detailFields = (
+          <InsurancePolicyView
+            data = { selectedDocumentToView }
+          />
+        )
+      }
       return <Dialog open={showViewDialog} aria-labelledby="form-dialog-title">
         <DialogTitle>{  }</DialogTitle>
         <DialogContent>
@@ -428,12 +454,10 @@ class DocumentPage extends ReactDrizzleComponent {
             InputProps={{
               readOnly: true,
             }} />
-
-          <DialogContentText>
-            Details
-          </DialogContentText>
-
           
+          { detailFields }
+
+
         </DialogContent>
         {/* <DialogActions>
           <Button onClick={this.handleClose} color="primary">Batal</Button>

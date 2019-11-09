@@ -1,12 +1,13 @@
 import React from 'react'
 import MaterialTextField from '@material-ui/core/TextField'
+import { DatePicker } from '@material-ui/pickers'
 
-class MedicalRecordView extends React.Component{
+class InsurancePolicyView extends React.Component{
   render(){
     const { data } = this.props
     return (
       <div>
-        <div className='account-page-section-title'>Informasi Medis</div>
+        <div className='account-page-section-title'>Informasi Polis</div>
         <MaterialTextField 
           label="Authored By"
           value= {data.documentAuthorName}
@@ -17,8 +18,8 @@ class MedicalRecordView extends React.Component{
         />
 
         <MaterialTextField 
-          label="Symptoms"
-          value= {data.medicalSymptoms}
+          label="Client Name"
+          value= {data.policyClientName}
           margin="normal"
           InputProps={{
             readOnly: true,
@@ -26,8 +27,8 @@ class MedicalRecordView extends React.Component{
         />
 
         <MaterialTextField 
-          label="Diagnosis"
-          value= {data.medicalDiagnosis}
+          label="Allowed Providers"
+          value= {data.policyAllowedProviders}
           margin="normal"
           InputProps={{
             readOnly: true,
@@ -35,8 +36,8 @@ class MedicalRecordView extends React.Component{
         />
 
         <MaterialTextField 
-          label="Doctor"
-          value= {data.medicalDoctor}
+          label="Allowed Treatments"
+          value= {data.policyAllowedTreatments}
           margin="normal"
           InputProps={{
             readOnly: true,
@@ -44,8 +45,8 @@ class MedicalRecordView extends React.Component{
         />
 
         <MaterialTextField 
-          label="Treatment"
-          value= {data.medicalTreatment}
+          label="Terms and Conditions"
+          value= {data.policyTnC}
           margin="normal"
           InputProps={{
             readOnly: true,
@@ -53,8 +54,8 @@ class MedicalRecordView extends React.Component{
         />
 
         <MaterialTextField 
-          label="Prescription"
-          value= {data.medicalPrescription}
+          label="Max Claim"
+          value= {data.policyMaxClaims}
           margin="normal"
           InputProps={{
             readOnly: true,
@@ -64,4 +65,4 @@ class MedicalRecordView extends React.Component{
     );
   }
 }
-export default MedicalRecordView
+export default InsurancePolicyView
