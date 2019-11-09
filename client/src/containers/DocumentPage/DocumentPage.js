@@ -21,6 +21,9 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import MaterialTextField from '@material-ui/core/TextField'
+import { DatePicker } from '@material-ui/pickers'
 
 const FIELD = {
   DOCUMENT_TYPE: 'documentType',
@@ -401,20 +404,56 @@ class DocumentPage extends ReactDrizzleComponent {
   renderViewDocument = () => {
     const { showViewDialog, selectedDocumentToView } = this.state
     if(selectedDocumentToView != null) {
-      return <Dialog open={this.props.showViewDialog} aria-labelledby="form-dialog-title">
-        {/* <DialogTitle>Manual Input Private Key</DialogTitle> */}
+      console.log('selectedDocumentToView', selectedDocumentToView)
+      return <Dialog open={showViewDialog} aria-labelledby="form-dialog-title">
+        <DialogTitle>{  }</DialogTitle>
         <DialogContent>
           <DialogContentText><span className='account-page-section-private-key-dialog'>
             Silakan memasukkan RSA Private Key yang sudah Anda simpan sebelumnya.
           </span></DialogContentText>
-          <TextField error={this.state.error} autoFocus margin="dense" label='RSA Private Key' fullWidth multiline
+          <MaterialTextField 
+            label="ID"
+            value= {selectedDocumentToView.documentId}
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+
+          <MaterialTextField 
+            label="Number"
+            value= {selectedDocumentToView.documentNumber}
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+
+          <MaterialTextField 
+            label="Description"
+            value= {selectedDocumentToView.documentShortDescription}
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+
+          <DatePicker margin="normal" 
+            label="Created At" 
+            value= {selectedDocumentToView.createdAt} 
+            format='MMMM Do YYYY' 
+            InputProps={{
+              readOnly: true,
+            }} />
+
+          {/* <TextField error={this.state.error} autoFocus margin="dense" label='RSA Private Key' fullWidth multiline
                     onChange={this.handleChange} value={this.state.value} 
-                    InputProps={{ style: { fontSize: 12, fontFamily: 'monospace' } }}/>
+                    InputProps={{ style: { fontSize: 12, fontFamily: 'monospace' } }}/> */}
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button onClick={this.handleClose} color="primary">Batal</Button>
           <Button onClick={this.handleSubmit} color="primary">Simpan</Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     } else {
       return <div></div>
