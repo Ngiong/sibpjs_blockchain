@@ -408,26 +408,9 @@ class DocumentPage extends ReactDrizzleComponent {
       return <Dialog open={showViewDialog} aria-labelledby="form-dialog-title">
         <DialogTitle>{  }</DialogTitle>
         <DialogContent>
-          <DialogContentText><span className='account-page-section-private-key-dialog'>
-            Silakan memasukkan RSA Private Key yang sudah Anda simpan sebelumnya.
-          </span></DialogContentText>
-          <MaterialTextField 
-            label="ID"
-            value= {selectedDocumentToView.documentId}
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-
-          <MaterialTextField 
-            label="Number"
-            value= {selectedDocumentToView.documentNumber}
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
+          <DialogContentText>
+            {selectedDocumentToView.documentId} - {selectedDocumentToView.documentNumber}
+          </DialogContentText>
 
           <MaterialTextField 
             label="Description"
@@ -446,9 +429,11 @@ class DocumentPage extends ReactDrizzleComponent {
               readOnly: true,
             }} />
 
-          {/* <TextField error={this.state.error} autoFocus margin="dense" label='RSA Private Key' fullWidth multiline
-                    onChange={this.handleChange} value={this.state.value} 
-                    InputProps={{ style: { fontSize: 12, fontFamily: 'monospace' } }}/> */}
+          <DialogContentText>
+            Details
+          </DialogContentText>
+
+          
         </DialogContent>
         {/* <DialogActions>
           <Button onClick={this.handleClose} color="primary">Batal</Button>
