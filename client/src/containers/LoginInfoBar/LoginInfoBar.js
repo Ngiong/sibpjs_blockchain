@@ -1,6 +1,8 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import './styles.css'
+
+import Unregistered from './unregistered'
 
 import menuIcon from './assets/menu-icon.png'
 import profileImg from './assets/profile-image.png'
@@ -10,18 +12,30 @@ import profileIcon from './assets/account-icon.png'
 class LoginInfoBar extends React.Component {
   state = {
     sidebarOpened: false,
+    unregisteredDialogOpened: false,
+    unregisteredDialogMessage: '',
     _getAccountDataKey: null,
   }
 
   componentDidMount = () => {
     const _getAccountDataKey = this.retrieveAccountData()
     this.setState({ _getAccountDataKey })
+
+    const accountAddress = this.props.drizzleState.accounts[0]
+    const accountPrivateKey = localStorage.getItem('accountPrivateKey#' + accountAddress) || ''
+    if (accountPrivateKey === '' && this.props.location.pathname !== '/account') this.setState({
+      unregisteredDialogOpened: true,
+    })
   }
 
   render() {
     const { drizzleState } = this.props
     const accountData = this.readAccountData()
     const accountAddress = drizzleState.accounts[0]
+
+    let unregisteredDialogOpened = this.state.unregisteredDialogOpened
+    if (accountData && !accountData.accountPublicKey) unregisteredDialogOpened = true
+    if (this.props.location.pathname === '/account') unregisteredDialogOpened = false
 
     let navbar = <div className='login-info-bar-navbar'>
       <img src={menuIcon} className='login-info-bar-navbar-menu-icon'
@@ -53,6 +67,7 @@ class LoginInfoBar extends React.Component {
     return <div className='login-info-bar'>
       { navbar }
       { sidebar }
+      <Unregistered visible={unregisteredDialogOpened} message={this.state.unregisteredDialogMessage} onRedirect={this.handleRedirect} />
     </div>
   }
 
@@ -72,6 +87,11 @@ class LoginInfoBar extends React.Component {
     const accountData = this.props.drizzleState.contracts.Account.account[_getAccountDataKey]
     return accountData && accountData.value
   }
+
+  handleRedirect = () => {
+    this.setState({ unregisteredDialogOpened: false })
+    this.props.history.push('/account')
+  }
 }
 
-export default LoginInfoBar
+export default withRouter(LoginInfoBar)
