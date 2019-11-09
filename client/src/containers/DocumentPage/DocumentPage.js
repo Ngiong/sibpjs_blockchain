@@ -190,58 +190,9 @@ class DocumentPage extends ReactDrizzleComponent {
       </div>
     </div>
 
-    const mockOwnedDocumentList = {"id-1": JSON.stringify({
-      "documentId": "id-1",
-      "documentType": "MEDICAL_RECORD",
-      "documentNumber": "abc",
-      "documentRecipient": "",
-      "documentShortDescription": "12121",
-      "documentCreatedAt": "2019-11-04",
-      "documentAdditionalDescription": "",
-      "medicalSymptoms": "abc",
-      "medicalDiagnosis": "diag",
-      "medicalDoctor": "dokter",
-      "medicalTreatment": "penanganan",
-      "medicalPrescription": "resep",
-      "documentAuthorName": "RS Holland",
-      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
-    }),
-    "id-2": JSON.stringify({
-      "documentId": "id-2",
-      "documentType": "INSURANCE_CLAIM",
-      "documentNumber": "abc",
-      "documentRecipient": "",
-      "documentShortDescription": "def",
-      "documentCreatedAt": "2019-11-15",
-      "documentAdditionalDescription": "",
-      "claimHealthProviderName": "informasi",
-      "claimVisitDate": "2019-11-05",
-      "claimDiagnosis": "diagnosis",
-      "claimAmount": "20000",
-      "documentAuthorName": "RS Holland",
-      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
-    }),
-    "id-3": JSON.stringify({
-      "documentId": "id-3",
-      "documentType": "INSURANCE_POLICY",
-      "documentNumber": "12121",
-      "documentRecipient": "",
-      "documentShortDescription": "ini dokumen",
-      "documentCreatedAt": "2019-11-16",
-      "documentAdditionalDescription": "",
-      "policyClientName": "abc",
-      "policyAllowedProviders": "partner",
-      "policyAllowedTreatments": "semua",
-      "policyTnC": "akwkasa",
-      "policyMaxClaims": "3001201021021",
-      "documentAuthorName": "RS Holland",
-      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
-    })}
-
     const ownedDocumentList = this.readOwnedDocumentList()
     const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
-    // const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
-    const rOwnedDocumentList = this.renderOwnedDocumentList(mockOwnedDocumentList)
+    const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
     const rViewDocument = this.renderViewDocument()
 
     const invalidPrivateKeyMessage = <div className='document-page-invalid-private-key-message'>
@@ -459,10 +410,6 @@ class DocumentPage extends ReactDrizzleComponent {
 
 
         </DialogContent>
-        {/* <DialogActions>
-          <Button onClick={this.handleClose} color="primary">Batal</Button>
-          <Button onClick={this.handleSubmit} color="primary">Simpan</Button>
-        </DialogActions> */}
       </Dialog>
     } else {
       return <div></div>
@@ -478,58 +425,8 @@ class DocumentPage extends ReactDrizzleComponent {
   handleCardOnClick = documentId => {
     console.log('documentIdabcdef', documentId)
     const { input } = this.state
-
-    const mockOwnedDocumentList = {"id-1": JSON.stringify({
-      "documentId": "id-1",
-      "documentType": "MEDICAL_RECORD",
-      "documentNumber": "abc",
-      "documentRecipient": "",
-      "documentShortDescription": "12121",
-      "documentCreatedAt": "2019-11-04",
-      "documentAdditionalDescription": "",
-      "medicalSymptoms": "abc",
-      "medicalDiagnosis": "diag",
-      "medicalDoctor": "dokter",
-      "medicalTreatment": "penanganan",
-      "medicalPrescription": "resep",
-      "documentAuthorName": "RS Holland",
-      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
-    }),
-    "id-2": JSON.stringify({
-      "documentId": "id-2",
-      "documentType": "INSURANCE_CLAIM",
-      "documentNumber": "abc",
-      "documentRecipient": "",
-      "documentShortDescription": "def",
-      "documentCreatedAt": "2019-11-15",
-      "documentAdditionalDescription": "",
-      "claimHealthProviderName": "informasi",
-      "claimVisitDate": "2019-11-05",
-      "claimDiagnosis": "diagnosis",
-      "claimAmount": "20000",
-      "documentAuthorName": "RS Holland",
-      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
-    }),
-    "id-3": JSON.stringify({
-      "documentId": "id-3",
-      "documentType": "INSURANCE_POLICY",
-      "documentNumber": "12121",
-      "documentRecipient": "",
-      "documentShortDescription": "ini dokumen",
-      "documentCreatedAt": "2019-11-16",
-      "documentAdditionalDescription": "",
-      "policyClientName": "abc",
-      "policyAllowedProviders": "partner",
-      "policyAllowedTreatments": "semua",
-      "policyTnC": "akwkasa",
-      "policyMaxClaims": "3001201021021",
-      "documentAuthorName": "RS Holland",
-      "documentAuthorAddress": "0x3D3b029A9B6Dd5D7ADFd7f653fbf1db8EaAfE506"
-    })}
-
     const ownedDocumentList = this.readOwnedDocumentList()
-    // const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
-    const decipheredDocumentList = mockOwnedDocumentList
+    const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
     Object.keys(decipheredDocumentList).map((docId, idx) => {
       console.log('loop', documentId, idx)
       if(docId == documentId) {
