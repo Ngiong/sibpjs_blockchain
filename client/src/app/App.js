@@ -31,6 +31,7 @@ class App extends React.Component {
     toastVisible: false,
     toastMessage: '',
   }
+  splashRef = React.createRef()
 
   componentDidMount = () => {
     const { drizzle } = this.props
@@ -52,11 +53,11 @@ class App extends React.Component {
     }
 
     setTimeout(() => {
-      document.getElementById('splash').classList.add('animated', 'bounceOut')
+      this.splashRef.current.classList.add('animated', 'bounceOut')
     }, 2000)
 
     setTimeout(() => {
-      document.getElementById('splash').classList.add('displayNone')
+      this.splashRef.current.classList.add('displayNone')
     }, 3000)
   }
 
@@ -79,7 +80,7 @@ class App extends React.Component {
             <LoginInfoBar {...drizzleProps} />
             <NavigationBar {...drizzleProps} />
             <div style={{ maxWidth: 500, padding: '64px 20px 100px 20px', margin: 'auto' }}>{routes}</div>
-            <div className='splash' id='splash'>
+            <div className='splash' id='splash' ref={this.splashRef}>
               <img src={sibpjsWhite} style={{ width: '45%' }}/>
               <img src={loading} style={{ width: '40%', position: 'absolute', bottom: '1em' }} />
             </div>
