@@ -325,8 +325,14 @@ class RequestPage extends ReactDrizzleComponent {
     Object.keys(_getDocumentDataKey).forEach(documentId => {
       const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
       const cipher = result && result.value.data
-      const data = decryptRSA(privateKey, cipher)
-      data.documentId = documentId
+      let data = decryptRSA(privateKey, cipher)
+      try {
+        let _data = JSON.parse(data)
+        _data.documentId = documentId
+        data = JSON.stringify(_data)
+      } catch (err) {
+      }
+
       decryptionResult[documentId] = data
       this.decipheredDocument[documentId] = data
     })
