@@ -1,8 +1,8 @@
 import request from 'superagent'
 
-const storeToES = (address, name, bpjs) => {
+const storeToES = (address, name, bpjs, type) => {
   const url = 'http://localhost:9200/sibpjs/account/' + address
-  const body = { name, bpjs }
+  const body = { name, bpjs, type }
   
   return request
     .put(url)

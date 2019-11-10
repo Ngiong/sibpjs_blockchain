@@ -39,10 +39,12 @@ class AccountSearch extends React.Component {
   componentDidMount = () => {
     queryToES()
       .then(result => {
-        const rs = result.body.hits.hits.map(s => ({
-          ...s._source,
-          address: s._id
-        }))
+        const rs = result.body.hits.hits
+          .filter(s => s._source.type && s._source.type === 'REGULAR')
+          .map(s => ({
+            ...s._source,
+            address: s._id
+          }))
         this.setState({ accountList: rs })
       })
   }

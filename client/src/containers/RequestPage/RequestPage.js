@@ -1,4 +1,5 @@
 import React from 'react'
+import request from 'superagent'
 import { withRouter } from 'react-router-dom'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import AccessRequestLedger from './ledger'
@@ -28,6 +29,20 @@ const FIELD = {
   CHOSEN_REQUEST_ENTRY: 'chosenRequestEntry',
 }
 
+const queryToES = () => {
+  const url = 'http://localhost:9200/sibpjs/account/_search'
+  const body = {
+  }
+  return request
+    .post(url)
+    .set('Content-Type', 'application/json')
+    .send(JSON.stringify(body))
+    .then(result => Promise.resolve(result.body.hits.hits.map(s => ({
+      ...s._source,
+      address: s._id
+    }))))
+}
+
 class RequestPage extends ReactDrizzleComponent {
   state = {
     input: {
@@ -37,6 +52,7 @@ class RequestPage extends ReactDrizzleComponent {
       chosenDocuments: [],
     },
     selectDialogActivity: false,
+    accountList: [],
 
     _getAccessRequestByGranterListDataKey: null,
     _getAccessRequestByGranterDataKey: {},
@@ -79,6 +95,8 @@ class RequestPage extends ReactDrizzleComponent {
     const accountAddress = this.props.drizzleState.accounts[0]
     const _accountPrivateKey = localStorage.getItem('accountPrivateKey#' + accountAddress)
     if (_accountPrivateKey) this.handleInputChange(FIELD.ACCOUNT_PRIVATE_KEY, _accountPrivateKey)
+
+    queryToES().then(result => this.setState({ accountList: result }))
   }
 
   render = () => {
@@ -116,10 +134,16 @@ class RequestPage extends ReactDrizzleComponent {
     const decipheredDocumentList = this.readDocument(input.accountPrivateKey)
     const rOwnedDocumentList = this.renderOwnedDocumentList(decipheredDocumentList)
 
+    const requesterES = this.state.accountList.find(s => s.address === this.state.input.chosenRequestEntry.requester)
+    const requesterSection = requesterES ? <div>
+      <div style={{ fontSize: '1.3em', overflowY: 'hidden', textOverflow: 'ellipsis'}}> {requesterES.name}</div>
+      <div style={{ fontSize: '0.8em', overflowY: 'hidden', textOverflow: 'ellipsis'}}> {this.state.input.chosenRequestEntry.requester}</div>
+    </div> : <div style={{ fontSize: '1.1em', overflowY: 'hidden', textOverflow: 'ellipsis'}}> {this.state.input.chosenRequestEntry.requester}</div>
+
     const documentSelectionSection = <div style={{ width: '100%' }}>
       <h1>Pemberian Akses #{this.state.input.chosenRequestEntry.id}</h1>
       <h3><div style={{ fontWeight: 500, color: 'black' }}>Kepada:</div>
-      <div style={{ fontSize: '1.1em', overflowY: 'hidden', textOverflow: 'ellipsis'}}> {this.state.input.chosenRequestEntry.granter}</div></h3>
+      {requesterSection}</h3>
       { rOwnedDocumentList }
       {/* <div>{Button('Kirim', this.handleGrantButtonOnClick, 'secondary', 'small', this.shouldDisableGrantButton())}</div> */}
     </div>
@@ -251,12 +275,17 @@ class RequestPage extends ReactDrizzleComponent {
       if (data.status === 'COMPLETED') className += ' request-page-list-success'
 
       const icon = data.status === 'DECLINED' ? accountIconWhite : accountIcon
+      const granterES = this.state.accountList.find(s => s.address === data.granter)
+      const granterSection = granterES ? <div>
+        <div style={{ fontSize: '1.3em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{granterES.name}</div>
+        <div style={{ fontSize: '0.7em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.granter}</div>
+      </div> : <div style={{ fontSize: '1.2em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.granter}</div>
 
       return <div key={'access-request-id-' + requestId} className={className}>
         <img src={icon} style={{ height: 50 }} />
         <div style={{ maxWidth: '70%' }}>
           <div>ID Request: #{data.id}</div>
-          <div style={{ fontSize: '1.2em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.granter}</div>
+          { granterSection }
           <div>Status Permohonan: <span style={{ fontSize: '1.1em', fontWeight: '600' }}>{data.status}</span></div>
           { data.status ==='COMPLETED' && 
           <div>Granted ID: <span style={{ fontSize: '1.1em', fontWeight: '600' }}>#{data.authorizedDocumentId}</span></div> }
@@ -278,12 +307,17 @@ class RequestPage extends ReactDrizzleComponent {
       if (!data) return null
 
       let className = 'request-page-list-item request-page-list-item-with-photo'
+      const requesterES = this.state.accountList.find(s => s.address === data.requester)
+      const requesterSection = requesterES ? <div>
+        <div style={{ fontSize: '1.3em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{requesterES.name}</div>
+        <div style={{ fontSize: '0.7em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.requester}</div>
+      </div> : <div style={{ fontSize: '1.2em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{data.requester}</div>
 
       return <div key={'access-request-id-' + requestId} className={className}>
         <img src={accountIcon} style={{ height: 50 }} />
         <div style={{ maxWidth: '70%' }}>
           <div>ID Request: #{data.id}</div>
-          <div className='request-page-list-item-name'>{data.requester}</div>
+          {requesterSection}
           <div>{Button('Pilih', () => onSelect(data), 'primary', 'small', false, 'text')}</div>
         </div>
       </div>

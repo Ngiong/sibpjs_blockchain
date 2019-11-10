@@ -1,4 +1,5 @@
 import React from 'react'
+import request from 'superagent'
 import ReactDrizzleComponent from '../_common/ReactDrizzleComponent'
 import DocumentLedger from './ledger'
 import { decryptRSA } from './rsa'
@@ -28,6 +29,20 @@ import InsuranceClaimView from './InsuranceClaimView'
 import MedicalRecordView from './MedicalRecordView'
 import InsurancePolicyView from './InsurancePolicyView'
 
+const queryToES = () => {
+    const url = 'http://localhost:9200/sibpjs/account/_search'
+    const body = {
+    }
+    return request
+      .post(url)
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify(body))
+      .then(result => Promise.resolve(result.body.hits.hits.map(s => ({
+        ...s._source,
+        address: s._id
+      }))))
+}
+
 class GrantedPage extends ReactDrizzleComponent {
     constructor() {
         super()
@@ -43,13 +58,16 @@ class GrantedPage extends ReactDrizzleComponent {
         showGrantedActivity: false,
         _getAuthorizedDocumentDataKey: null,
         selectedDocumentToView: null,
-        showViewDialog: false
+        showViewDialog: false,
+        accountList: [],
     }
 
     componentDidMount = () => {
         const accountAddress = this.props.drizzleState.accounts[0]
         const _accountPrivateKey = localStorage.getItem('accountPrivateKey#' + accountAddress)
         if (_accountPrivateKey) this.handleInputChange('accountPrivateKey', _accountPrivateKey)
+
+        queryToES().then(result => this.setState({ accountList: result }))
     }
 
     render = () => {
@@ -120,10 +138,16 @@ class GrantedPage extends ReactDrizzleComponent {
                     handleOnClick = { this.handleCardOnClick }></Card>
             </Grid>
         })
+
+        const ownerES = this.state.accountList.find(s => s.address === authDocumentData.documentOwner)
+        const ownerSection = ownerES ? <div>
+            <div>{ownerES.name}</div>
+            <div style={{ fontSize: '0.7em', fontWeight: '500', textOverflow: 'ellipsis', overflow: 'hidden' }}>{authDocumentData.documentOwner}</div>
+        </div> : authDocumentData.documentOwner
         
         return <div>
             <h1>Rincian dokumen yang Anda terima:</h1>
-            <h2><div style={{ fontSize: 20, fontWeight: 500 }}>Pemilik Dokumen:</div> {authDocumentData.documentOwner}</h2>
+            <h2><div style={{ fontSize: 20, fontWeight: 500 }}>Pemilik Dokumen:</div> {ownerSection}</h2>
             <Grid container spacing={3}>{cardElements}</Grid>
         </div>
         // const cardElements = Object.keys(documentList).map((documentId, idx) => {
