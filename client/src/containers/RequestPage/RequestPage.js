@@ -326,6 +326,7 @@ class RequestPage extends ReactDrizzleComponent {
       const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
       const cipher = result && result.value.data
       const data = decryptRSA(privateKey, cipher)
+      data.documentId = documentId
       decryptionResult[documentId] = data
       this.decipheredDocument[documentId] = data
     })
@@ -346,8 +347,8 @@ class RequestPage extends ReactDrizzleComponent {
         {Checkbox(this.isDocumentChosen(documentId), 'Terpilih', () => this.handleCheckboxClick(documentId))}
       </div>
       return <Grid key={idx} item md={6} sm={12} xs={12}>
-        <Card title='Nama RS/Company' documentId={documentId} date='{documentCreatedAt}'
-              description='{documentShortDescription}' documentType={documentType} actions={documentAction} />
+        <Card title={document.documentAuthorName} documentId={documentId} date={document.documentCreatedAt}
+              description={document.documentShortDescription} documentType={documentType} actions={documentAction} />
       </Grid>
     }).filter(s => s)
     if (cardElements.length === 0) {
@@ -410,9 +411,7 @@ class RequestPage extends ReactDrizzleComponent {
       <div>Permohonan Akses telah berhasil dikirim.</div>
       <div>Silakan cek secara berkala untuk mengetahui status permohonan Anda.</div>
     </div>)
-    const newInput = { ...this.state.input }
-    newInput.requestTo = ''
-    this.setState({ input: newInput })
+    this.props.history.push('/')
   }
 }
 

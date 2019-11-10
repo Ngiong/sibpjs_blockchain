@@ -90,7 +90,7 @@ class GrantedPage extends ReactDrizzleComponent {
 
         const cardElements = documentList.map((document, idx) => {
             return <Grid key={idx} item md={6} sm={12} xs={12}>
-                <Card title='Nama RS/Company' documentId={document.documentId} date={document.documentCreatedAt}
+                <Card title={document.documentAuthorName} documentId={document.documentId} date={document.documentCreatedAt}
                     description={document.documentShortDescription} documentType={document.documentType} />
             </Grid>
         })
