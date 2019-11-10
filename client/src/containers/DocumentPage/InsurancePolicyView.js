@@ -15,6 +15,7 @@ class InsurancePolicyView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -24,6 +25,7 @@ class InsurancePolicyView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -33,6 +35,7 @@ class InsurancePolicyView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -42,6 +45,7 @@ class InsurancePolicyView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -51,6 +55,7 @@ class InsurancePolicyView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -60,6 +65,7 @@ class InsurancePolicyView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
       </div>
     );

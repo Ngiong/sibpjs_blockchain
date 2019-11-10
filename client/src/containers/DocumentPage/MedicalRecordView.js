@@ -14,6 +14,7 @@ class MedicalRecordView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -23,6 +24,7 @@ class MedicalRecordView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -32,6 +34,7 @@ class MedicalRecordView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -41,6 +44,7 @@ class MedicalRecordView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -50,6 +54,7 @@ class MedicalRecordView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -59,6 +64,7 @@ class MedicalRecordView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
       </div>
     );

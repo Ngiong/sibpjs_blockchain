@@ -15,6 +15,7 @@ class InsuranceClaimView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -24,6 +25,7 @@ class InsuranceClaimView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <DatePicker 
@@ -34,6 +36,7 @@ class InsuranceClaimView extends React.Component{
           InputProps={{
             readOnly: true,
           }} 
+          fullWidth
         />
 
         <MaterialTextField 
@@ -43,6 +46,7 @@ class InsuranceClaimView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -52,6 +56,7 @@ class InsuranceClaimView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -61,6 +66,7 @@ class InsuranceClaimView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
 
         <MaterialTextField 
@@ -70,6 +76,7 @@ class InsuranceClaimView extends React.Component{
           InputProps={{
             readOnly: true,
           }}
+          fullWidth
         />
       </div>
     );

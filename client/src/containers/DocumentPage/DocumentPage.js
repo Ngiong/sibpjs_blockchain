@@ -349,6 +349,7 @@ class DocumentPage extends ReactDrizzleComponent {
       const result = this.props.drizzleState.contracts.Document.ownedDocumentData[_getDocumentDataKey[documentId]]
       const cipher = result && result.value.data
       const data = decryptRSA(privateKey, cipher)
+      if (typeof(data) !== 'string') data.documentId = documentId
       decryptionResult[documentId] = data
     })
     return decryptionResult
@@ -387,7 +388,7 @@ class DocumentPage extends ReactDrizzleComponent {
       }
       return <Dialog open={showViewDialog} onClose = { this.handleCloseDialog }  aria-labelledby="form-dialog-title">
         <DialogTitle>
-          {selectedDocumentToView.documentId} - {selectedDocumentToView.documentNumber}
+          #{selectedDocumentToView.documentId} - {selectedDocumentToView.documentNumber}
           <IconButton aria-label="close" style = {{float:'right', color:'red'}} onClick={this.handleCloseDialog}>
             <CloseIcon />
           </IconButton>
@@ -400,6 +401,7 @@ class DocumentPage extends ReactDrizzleComponent {
             InputProps={{
               readOnly: true,
             }}
+            fullWidth
           />
 
           <DatePicker margin="normal" 
@@ -408,7 +410,8 @@ class DocumentPage extends ReactDrizzleComponent {
             format='MMMM Do YYYY' 
             InputProps={{
               readOnly: true,
-            }} />
+            }}
+            fullWidth />
           
           { detailFields }
 
@@ -444,6 +447,7 @@ class DocumentPage extends ReactDrizzleComponent {
         try {
           console.log('document', document)
           document = JSON.parse(decipheredDocumentList[documentId])
+          document.documentId = docId
         } catch (err) {
           return null
         }
