@@ -24,6 +24,8 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import MaterialTextField from '@material-ui/core/TextField'
 import { DatePicker } from '@material-ui/pickers'
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 import InsuranceClaimView from './InsuranceClaimView'
 import MedicalRecordView from './MedicalRecordView'
@@ -73,6 +75,7 @@ class DocumentPage extends ReactDrizzleComponent {
   constructor() {
     super()
     this.handleCardOnClick = this.handleCardOnClick.bind(this)
+    // this.handleCloseDialog = this.handleCloseDialog.bind(this)
   }
 
   state = {
@@ -382,13 +385,14 @@ class DocumentPage extends ReactDrizzleComponent {
           />
         )
       }
-      return <Dialog open={showViewDialog} aria-labelledby="form-dialog-title">
-        <DialogTitle>{  }</DialogTitle>
+      return <Dialog open={showViewDialog} onClose = { this.handleCloseDialog }  aria-labelledby="form-dialog-title">
+        <DialogTitle>
+          {selectedDocumentToView.documentId} - {selectedDocumentToView.documentNumber}
+          <IconButton aria-label="close" style = {{float:'right', color:'red'}} onClick={this.handleCloseDialog}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {selectedDocumentToView.documentId} - {selectedDocumentToView.documentNumber}
-          </DialogContentText>
-
           <MaterialTextField 
             label="Description"
             value= {selectedDocumentToView.documentShortDescription}
@@ -419,6 +423,12 @@ class DocumentPage extends ReactDrizzleComponent {
   toggleShowDialog = () => {
     this.setState({
       showViewDialog: !this.state.showViewDialog
+    })
+  }
+
+  handleCloseDialog = () => {
+    this.setState({
+      showViewDialog: false
     })
   }
 
